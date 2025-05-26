@@ -6,7 +6,6 @@
   <title>食譜管理 App</title>
   <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
 </head>
@@ -19,19 +18,14 @@
       const [ingredients, setIngredients] = useState([]);
       const [recipes, setRecipes] = useState([]);
       const [page, setPage] = useState('home');
-      const repoOwner = 'FirstTimeUsingGit'; // 請替換為您嘅 GitHub 用戶名
-      const repoName = 'todayeatwhat'; // 請替換為您嘅倉庫名
-      const token = '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'; // 請替換為您嘅 GitHub Personal Access Token
+      const API_URL = 'https://your-vercel-app.vercel.app'; // 請替換為您嘅 Vercel 後端 URL
 
       // 獲取數據
       useEffect(() => {
         const fetchData = async () => {
           try {
-            const response = await axios.get(
-              `https://api.github.com/repos/${repoOwner}/${repoName}/contents/data.json`
-            );
-            const decodedContent = atob(response.data.content);
-            const jsonData = JSON.parse(decodedContent);
+            const response = await fetch(`${API_URL}/data`);
+            const jsonData = await response.json();
             setIngredients(jsonData.ingredients || []);
             setRecipes(jsonData.recipes || []);
           } catch (error) {
@@ -41,28 +35,14 @@
         fetchData();
       }, []);
 
-      // 保存數據到 GitHub
+      // 保存數據
       const saveData = async (updatedIngredients, updatedRecipes) => {
-        const jsonData = { ingredients: updatedIngredients, recipes: updatedRecipes };
-        const content = btoa(JSON.stringify(jsonData));
         try {
-          const response = await axios.get(
-            `https://api.github.com/repos/${repoOwner}/${repoName}/contents/data.json`
-          );
-          await axios.put(
-            `https://api.github.com/repos/${repoOwner}/${repoName}/contents/data.json`,
-            {
-              message: '更新 data.json',
-              content: content,
-              sha: response.data.sha,
-            },
-            {
-              headers: {
-                Authorization: `token ${token}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
+          await fetch(`${API_URL}/data`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ingredients: updatedIngredients, recipes: updatedRecipes }),
+          });
           setIngredients(updatedIngredients);
           setRecipes(updatedRecipes);
         } catch (error) {
@@ -152,10 +132,10 @@
       };
 
       const filteredIngredients = ingredients.filter(ing =>
-        ing.name.includes(searchTerm) ||
-        ing.type.includes(searchTerm) ||
-        ing.season.includes(searchTerm) ||
-        ing.cookingMethods.some(method => method.includes(searchTerm))
+        ing.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ing.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ing.season.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        ing.cookingMethods.some(method => method.toLowerCase().includes(searchTerm.toLowerCase()))
       );
 
       return (
@@ -240,10 +220,10 @@
       const filteredRecipes = recipes.filter(recipe => {
         const recipeIngredients = ingredients.filter(ing => recipe.ingredients.includes(ing.id));
         return (
-          recipe.name.includes(searchTerm) ||
-          recipeIngredients.some(ing => ing.name.includes(searchTerm)) ||
-          recipeIngredients.some(ing => ing.season.includes(searchTerm)) ||
-          recipeIngredients.some(ing => ing.cookingMethods.some(method => method.includes(searchTerm)))
+          recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          recipeIngredients.some(ing => ing.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          recipeIngredients.some(ing => ing.season.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          recipeIngredients.some(ing => ing.cookingMethods.some(method => method.toLowerCase().includes(searchTerm.toLowerCase())))
         );
       });
 
