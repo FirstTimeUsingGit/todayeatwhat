@@ -18,13 +18,14 @@
       const [ingredients, setIngredients] = useState([]);
       const [recipes, setRecipes] = useState([]);
       const [page, setPage] = useState('home');
-      const API_URL = 'https://todayeatwhat.vercel.app'; // Replace with your Vercel URL
+      const API_URL = 'https://todayeatwhat.vercel.app'; // Replace with your Vercel URL after deployment
 
       // Fetch data
       useEffect(() => {
         const fetchData = async () => {
           try {
             const response = await fetch(`${API_URL}/data`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const jsonData = await response.json();
             setIngredients(jsonData.ingredients || []);
             setRecipes(jsonData.recipes || []);
@@ -38,11 +39,12 @@
       // Save data
       const saveData = async (updatedIngredients, updatedRecipes) => {
         try {
-          await fetch(`${API_URL}/data`, {
+          const response = await fetch(`${API_URL}/data`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ ingredients: updatedIngredients, recipes: updatedRecipes }),
           });
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           setIngredients(updatedIngredients);
           setRecipes(updatedRecipes);
         } catch (error) {
@@ -153,7 +155,7 @@
             </select>
             <div className="mb-2">
               {['蒸', '炒', '煮', '炸', '湯', '麵'].map(method => (
-                <label key={method} className="inline-flex items-center mr-4">
+                <label key={method} className="inline-flex items-center mr-2">
                   <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600" checked={cookingMethods.includes(method)} onChange={(e) => {
                     if (e.target.checked) setCookingMethods([...cookingMethods, method]);
                     else setCookingMethods(cookingMethods.filter(m => m !== method));
@@ -191,7 +193,7 @@
                   <td className="border px-4 py-2">{ing.cookingMethods.join(', ')}</td>
                   <td className="border px-4 py-2">
                     <button
-                      className="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 transition duration-200"
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition duration-200"
                       onClick={() => deleteIngredient(ing.id)}
                     >
                       刪除
@@ -235,7 +237,7 @@
             <input className="border p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500" value={name} onChange={(e) => setName(e.target.value)} placeholder="菜單名稱" />
             <div className="mb-2">
               {ingredients.map(ing => (
-                <label key={ing.id} className="inline-flex items-center mr-4">
+                <label key={ing.id} className="inline-flex items-center mr-2">
                   <input
                     type="checkbox"
                     className="form-checkbox h-5 w-5 text-blue-600"
@@ -282,7 +284,7 @@
                     <td className="border px-4 py-2">{methods}</td>
                     <td className="border px-4 py-2">
                       <button
-                        className="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 transition duration-200"
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition duration-200"
                         onClick={() => deleteRecipe(recipe.id)}
                       >
                         刪除
@@ -358,7 +360,8 @@
       );
     };
 
-    ReactDOM.render(<App />, document.getElementById('root'));
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
