@@ -3,12 +3,23 @@ const axios = require('axios');
 const cors = require('cors');
 const app = express();
 
-app.use(cors());
+// Configure CORS to allow requests from the frontend
+app.use(cors({
+  origin: 'https://FirstTimeUsingGit.github.io',
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+}));
+
 app.use(express.json());
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO_OWNER = 'FirstTimeUsingGit';
 const REPO_NAME = 'todayeatwhat';
+
+// Root endpoint to verify API is running
+app.get('/', (req, res) => {
+  res.json({ status: 'API is running' });
+});
 
 // Fetch data.json
 app.get('/data', async (req, res) => {
@@ -20,6 +31,7 @@ app.get('/data', async (req, res) => {
     const decodedContent = Buffer.from(response.data.content, 'base64').toString();
     res.json(JSON.parse(decodedContent));
   } catch (error) {
+    console.error('Error fetching data:', error.message);
     res.status(500).json({ error: 'Failed to fetch data' });
   }
 });
@@ -45,6 +57,7 @@ app.post('/data', async (req, res) => {
     );
     res.json({ success: true });
   } catch (error) {
+    console.error('Error saving data:', error.message);
     if (error.response?.status === 409) {
       res.status(409).json({ error: 'Data conflict, please retry' });
     } else {
