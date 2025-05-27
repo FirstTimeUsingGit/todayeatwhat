@@ -106,6 +106,7 @@
         console.log('Input:', input, 'Hashed:', hashedPassword);
 
         if (validHashes.includes(hashedPassword)) {
+          localStorage.setItem('isAuthenticated', 'true');
           onLogin();
         } else {
           setError('密碼錯誤，請輸入正確密碼。');
@@ -133,7 +134,7 @@
       );
     };
 
-    const App = () => {
+    const App = ({ onLogout }) => {
       const [ingredients, setIngredients] = useState([]);
       const [recipes, setRecipes] = useState([]);
       const [page, setPage] = useState('home');
@@ -210,6 +211,11 @@
         return recipes[Math.floor(Math.random() * recipes.length)];
       };
 
+      const handleLogout = () => {
+        localStorage.removeItem('isAuthenticated');
+        onLogout();
+      };
+
       return (
         <div className="container mx-auto p-4 sm:p-6 max-w-4xl bg-white shadow-lg rounded-lg mt-4 sm:mt-6">
           {fetchError && <p className="text-red-600 mb-4 text-center text-sm sm:text-base">{fetchError}</p>}
@@ -218,6 +224,7 @@
             <button className="px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200 text-sm sm:text-base" onClick={() => setPage('editIngredients')}>編輯材料</button>
             <button className="px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200 text-sm sm:text-base" onClick={() => setPage('editRecipes')}>編輯菜單</button>
             <button className="px-3 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200 text-sm sm:text-base" onClick={() => setPage('whatToEat')}>唔知食乜好</button>
+            <button className="px-3 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition duration-200 text-sm sm:text-base" onClick={handleLogout}>登出</button>
           </nav>
 
           {page === 'home' && (
@@ -722,8 +729,8 @@
         );
 
     const Root = () => {
-      const [isAuthenticated, setIsAuthenticated] = useState(false);
-      return isAuthenticated ? <App /> : <Auth onLogin={() => setIsAuthenticated(true)} />;
+      const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('isAuthenticated') === 'true');
+      return isAuthenticated ? <App onLogout={() => setIsAuthenticated(false)} /> : <Auth onLogin={() => setIsAuthenticated(true)} />;
     };
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
