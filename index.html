@@ -9,7 +9,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
 </head>
-<body className="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 min-h-screen">
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useEffect } = React;
@@ -18,8 +18,9 @@
       const [ingredients, setIngredients] = useState([]);
       const [recipes, setRecipes] = useState([]);
       const [page, setPage] = useState('home');
-    const API_URL = 'https://todayeatwhat-backend.vercel.app';
-      // 獲取數據
+      const API_URL = 'https://todayeatwhat.vercel.app'; // Replace with your Vercel URL
+
+      // Fetch data
       useEffect(() => {
         const fetchData = async () => {
           try {
@@ -28,13 +29,13 @@
             setIngredients(jsonData.ingredients || []);
             setRecipes(jsonData.recipes || []);
           } catch (error) {
-            console.error('獲取數據失敗:', error);
+            console.error('Failed to fetch data:', error);
           }
         };
         fetchData();
       }, []);
 
-      // 保存數據
+      // Save data
       const saveData = async (updatedIngredients, updatedRecipes) => {
         try {
           await fetch(`${API_URL}/data`, {
@@ -45,7 +46,7 @@
           setIngredients(updatedIngredients);
           setRecipes(updatedRecipes);
         } catch (error) {
-          console.error('保存數據失敗:', error);
+          console.error('Failed to save data:', error);
         }
       };
 
@@ -190,7 +191,7 @@
                   <td className="border px-4 py-2">{ing.cookingMethods.join(', ')}</td>
                   <td className="border px-4 py-2">
                     <button
-                      className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                      className="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 transition duration-200"
                       onClick={() => deleteIngredient(ing.id)}
                     >
                       刪除
@@ -212,7 +213,8 @@
       const handleSubmit = () => {
         if (name && selectedIngredients.length > 0) {
           addRecipe({ name, ingredients: selectedIngredients });
-          setName(''); setSelectedIngredients([]);
+          setName('');
+          setSelectedIngredients([]);
         }
       };
 
@@ -234,10 +236,15 @@
             <div className="mb-2">
               {ingredients.map(ing => (
                 <label key={ing.id} className="inline-flex items-center mr-4">
-                  <input type="checkbox" className="form-checkbox h-5 w-5 text-blue-600" checked={selectedIngredients.includes(ing.id)} onChange={(e) => {
-                    if (e.target.checked) setSelectedIngredients([...selectedIngredients, ing.id]);
-                    else setSelectedIngredients(selectedIngredients.filter(id => id !== ing.id));
-                  }} />
+                  <input
+                    type="checkbox"
+                    className="form-checkbox h-5 w-5 text-blue-600"
+                    checked={selectedIngredients.includes(ing.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) setSelectedIngredients([...selectedIngredients, ing.id]);
+                      else setSelectedIngredients(selectedIngredients.filter(id => id !== ing.id));
+                    }}
+                  />
                   <span className="ml-2 text-gray-700">{ing.name}</span>
                 </label>
               ))}
@@ -275,7 +282,7 @@
                     <td className="border px-4 py-2">{methods}</td>
                     <td className="border px-4 py-2">
                       <button
-                        className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
+                        className="bg-red-600 text-white px-4 py-2 rounded-lg shadow hover:bg-red-700 transition duration-200"
                         onClick={() => deleteRecipe(recipe.id)}
                       >
                         刪除

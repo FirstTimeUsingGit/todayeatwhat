@@ -10,7 +10,7 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO_OWNER = 'FirstTimeUsingGit';
 const REPO_NAME = 'todayeatwhat';
 
-// 獲取 data.json
+// Fetch data.json
 app.get('/data', async (req, res) => {
   try {
     const response = await axios.get(
@@ -20,11 +20,11 @@ app.get('/data', async (req, res) => {
     const decodedContent = Buffer.from(response.data.content, 'base64').toString();
     res.json(JSON.parse(decodedContent));
   } catch (error) {
-    res.status(500).json({ error: '獲取數據失敗' });
+    res.status(500).json({ error: 'Failed to fetch data' });
   }
 });
 
-// 更新 data.json
+// Update data.json
 app.post('/data', async (req, res) => {
   try {
     const { ingredients, recipes } = req.body;
@@ -45,7 +45,11 @@ app.post('/data', async (req, res) => {
     );
     res.json({ success: true });
   } catch (error) {
-    res.status(500).json({ error: '保存數據失敗' });
+    if (error.response?.status === 409) {
+      res.status(409).json({ error: 'Data conflict, please retry' });
+    } else {
+      res.status(500).json({ error: 'Failed to save data' });
+    }
   }
 });
 
