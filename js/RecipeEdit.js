@@ -20,37 +20,37 @@ const EditRecipes = ({ recipes, ingredients, cookingMethods, ingredientTypes, sa
   const seasonOptions = ['春', '夏', '秋', '冬', '四季'].map(s => ({ value: s, label: s }));
 
   const handleSubmit = () => {
-    if (name && selectedIngredients.length > 0 && method && selectedRecipesCookingMethods.length > 0 && seasons.length > 0) {
-      const recipeData = {
-        name,
-        ingredients: selectedIngredients.map(ing => ing.value),
-        method,
-        cookingMethods: selectedRecipesCookingMethods.map(m => m.value),
-        seasons: seasons.map(s => s.value)
-      };
-      let updatedRecipes = [...recipes];
-      if (editRecipeId) {
-        updatedRecipes = recipes.map(recipe =>
-          recipe.id === editRecipeId ? { ...recipe, ...recipeData } : recipe
-        );
-      } else {
-        updatedRecipes.push({ id: Date.now(), ...recipeData });
-      }
-      saveData({
-        ingredients,
-        recipes: updatedRecipes,
-        cookingMethods,
-        ingredientTypes
-      });
-      setEditRecipeId(null);
-      setName('');
-      setSelectedType(null);
-      setSelectedIngredients([]);
-      setMethod('');
-      setSelectedRecipesCookingMethods([]);
-      setSeasons([]);
+  if (name && selectedIngredients.length > 0 && method && selectedRecipesCookingMethods.length > 0 && seasons.length > 0) {
+    const recipeData = {
+      name,
+      ingredients: selectedIngredients.map(ing => ing.value),
+      method,
+      cookingMethods: selectedRecipesCookingMethods.map(m => m.value),
+      seasons: seasons.map(s => s.value)
+    };
+    let updatedRecipes = [...recipes];
+    if (editRecipeId) {
+      updatedRecipes = recipes.map(recipe =>
+        recipe.id === editRecipeId ? { ...recipe, ...recipeData } : recipe
+      );
+    } else {
+      updatedRecipes.push({ id: Date.now(), ...recipeData });
     }
-  };
+    saveData({
+      ingredients,
+      recipes: updatedRecipes,
+      cookingMethods,
+      ingredientTypes
+    });
+    setEditRecipeId(null);
+    setName('');
+    setSelectedType(null);
+    setSelectedIngredients([]);
+    setMethod('');
+    setSelectedRecipesCookingMethods([]);
+    setSeasons([]);
+  }
+};
 
   const handleEdit = (recipe) => {
     setEditRecipeId(recipe.id);
@@ -87,7 +87,7 @@ const EditRecipes = ({ recipes, ingredients, cookingMethods, ingredientTypes, sa
 
   const removeIngredient = (id) => {
     setSelectedIngredients(prev => prev.filter(ing => ing.value !== id));
-  );
+  };
 
   const filteredRecipes = recipes.filter(recipe => {
     const recipeIngredients = ingredients.filter(ing => recipe.ingredients.includes(ing.id));
@@ -147,7 +147,7 @@ const EditRecipes = ({ recipes, ingredients, cookingMethods, ingredientTypes, sa
             hideSelectedOptions={false}
             closeMenuOnSelect={false}
           />
-          {selectedIngredients?.length > 0 && (
+          {selectedIngredients.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-2">
               {selectedIngredients.map(ing => (
                 <span key={ing.value} className="custom-tag">
@@ -252,7 +252,7 @@ const EditRecipes = ({ recipes, ingredients, cookingMethods, ingredientTypes, sa
               <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">做法</th>
               <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">季節</th>
               <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">烹調方法</th>
-              <th className="border px-2 sm:px definitions.length-4 py-2 text-sm sm:text-base">操作</th>
+              <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">操作</th>
             </tr>
           </thead>
           <tbody>
@@ -273,7 +273,7 @@ const EditRecipes = ({ recipes, ingredients, cookingMethods, ingredientTypes, sa
                       編輯
                     </button>
                     <button
-                      className="px-2 sm:px-4 py-1 sm:py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition duration-200 text-sm sm:text-base"
+                      className="px-2 sm:px-4 py-1 sm:py-2 bg-red-600 text-white rounded-btn hover:bg-red-700 transition duration-200 text-sm sm:text-base"
                       onClick={() => handleDelete(recipe.id)}
                     >
                       刪除
