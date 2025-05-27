@@ -8,6 +8,8 @@
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-select@5.7.0/dist/react-select.development.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/react-select@5.7.0/dist/css/react-select.min.css" rel="stylesheet"/>
 </head>
 <body class="bg-gray-100 min-h-screen">
   <div id="root"></div>
@@ -18,7 +20,7 @@
       const [ingredients, setIngredients] = useState([]);
       const [recipes, setRecipes] = useState([]);
       const [page, setPage] = useState('home');
-      const API_URL = 'https://todayeatwhat.vercel.app'; // Replace with your Vercel URL after deployment
+      const API_URL = 'https://todayeatwhat.vercel.app';
 
       // Fetch data
       useEffect(() => {
@@ -76,10 +78,10 @@
         return recipes.filter(recipe => {
           const recipeIngredients = ingredients.filter(ing => recipe.ingredients.includes(ing.id));
           return (
-            (!filters.ingredient || recipe.ingredients.includes(filters.ingredient)) &&
-            (!filters.season || recipeIngredients.some(ing => ing.season === filters.season)) &&
-            (!filters.cookingMethod || recipeIngredients.some(ing => ing.cookingMethods.includes(filters.cookingMethod))) &&
-            (!filters.type || recipeIngredients.some(ing => ing.type === filters.type))
+            (!filters.ingredients || filters.ingredients.length === 0 || filters.ingredients.some(ingId => recipe.ingredients.includes(ingId))) &&
+            (!filters.seasons || filters.seasons.length === 0 || recipe.seasons.some(s => filters.seasons.includes(s))) &&
+            (!filters.cookingMethods || filters.cookingMethods.length === 0 || recipe.cookingMethods.some(cm => filters.cookingMethods.includes(cm))) &&
+            (!filters.types || filters.types.length === 0 || recipeIngredients.some(ing => filters.types.includes(ing.type)))
           );
         });
       };
@@ -142,12 +144,12 @@
 
       return (
         <div>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">編輯材料</h2>
-          <div className="mb-6 bg-gray-50 p-4 rounded-lg shadow">
-            <input className="border p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500" value={name} onChange={(e) => setName(e.target.value)} placeholder="材料名稱" />
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2">編輯材料</h2>
+          <div className="mb-6 bg-gray-50 p-4 rounded-md shadow">
+            <input className="border p-2 rounded w-full mb-2 focus:outline-none focus:border-blue-500" value={name} onChange={(e) => setName(e.target.value)} placeholder="材料名稱" />
             <select className="border p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500" value={type} onChange={(e) => setType(e.target.value)}>
               <option value="">選擇種類</option>
-              {['肉類', '蔬菜', '蛋', '海鮮', '豆類', '其他'].map(t => <option key={t} value={t}>{t}</option>)}
+              {['肉類', '蔬菜', '魚', '蛋', '海鮮', '豆類', '其他'].map(t => <option key={t} value={t}>{t}</option>)}
             </select>
             <select className="border p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500" value={season} onChange={(e) => setSeason(e.target.value)}>
               <option value="">選擇季節</option>
@@ -210,13 +212,29 @@
     const EditRecipes = ({ recipes, ingredients, addRecipe, deleteRecipe }) => {
       const [name, setName] = useState('');
       const [selectedIngredients, setSelectedIngredients] = useState([]);
+      const [method, setMethod] = useState('');
+      const [cookingMethods, setCookingMethods] = useState([]);
+      const [seasons, setSeasons] = useState([]);
       const [searchTerm, setSearchTerm] = useState('');
 
+      const ingredientOptions = ingredients.map(ing => ({ value: ing.id, label: ing.name }));
+      const cookingMethodOptions = ['蒸', '炒', '煮', '炸', '湯', '麵'].map(m => ({ value: m, label: m }));
+      const seasonOptions = ['春', '夏', '秋', '冬', '四季'].map(s => ({ value: s, label: s }));
+
       const handleSubmit = () => {
-        if (name && selectedIngredients.length > 0) {
-          addRecipe({ name, ingredients: selectedIngredients });
+        if (name && selectedIngredients.length > 0 && method && cookingMethods.length > 0 && seasons.length > 0) {
+          addRecipe({
+            name,
+            ingredients: selectedIngredients.map(opt => opt.value),
+            method,
+            cookingMethods: cookingMethods.map(opt => opt.value),
+            seasons: seasons.map(opt => opt.value)
+          });
           setName('');
           setSelectedIngredients([]);
+          setMethod('');
+          setCookingMethods([]);
+          setSeasons([]);
         }
       };
 
@@ -225,31 +243,62 @@
         return (
           recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           recipeIngredients.some(ing => ing.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          recipeIngredients.some(ing => ing.season.toLowerCase().includes(searchTerm.toLowerCase())) ||
-          recipeIngredients.some(ing => ing.cookingMethods.some(method => method.toLowerCase().includes(searchTerm.toLowerCase())))
+          recipe.seasons.some(s => s.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          recipe.cookingMethods.some(cm => cm.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (recipe.method && recipe.method.toLowerCase().includes(searchTerm.toLowerCase()))
         );
       });
 
       return (
         <div>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">編輯菜單</h2>
-          <div className="mb-6 bg-gray-50 p-4 rounded-lg shadow">
-            <input className="border p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500" value={name} onChange={(e) => setName(e.target.value)} placeholder="菜單名稱" />
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2">編輯菜單</h2>
+          <div className="mb-6 bg-gray-50 p-4 rounded-md shadow">
+            <input className="border p-2 rounded w-full mb-2 focus:outline-none focus:border-blue-500" value={name} onChange={(e) => setName(e.target.value)} placeholder="菜單名稱" />
             <div className="mb-2">
-              {ingredients.map(ing => (
-                <label key={ing.id} className="inline-flex items-center mr-2">
-                  <input
-                    type="checkbox"
-                    className="form-checkbox h-5 w-5 text-blue-600"
-                    checked={selectedIngredients.includes(ing.id)}
-                    onChange={(e) => {
-                      if (e.target.checked) setSelectedIngredients([...selectedIngredients, ing.id]);
-                      else setSelectedIngredients(selectedIngredients.filter(id => id !== ing.id));
-                    }}
-                  />
-                  <span className="ml-2 text-gray-700">{ing.name}</span>
-                </label>
-              ))}
+              <label className="block text-gray-700 mb-1">材料</label>
+              <Select
+                isMulti
+                options={ingredientOptions}
+                value={selectedIngredients}
+                onChange={setSelectedIngredients}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="選擇材料..."
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1">做法</label>
+              <textarea
+                className="border p-2 rounded w-full focus:outline-none focus:border-blue-500"
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+                placeholder="輸入做法..."
+                rows="4"
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1">烹調方式</label>
+              <Select
+                isMulti
+                options={cookingMethodOptions}
+                value={cookingMethods}
+                onChange={setCookingMethods}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="選擇烹調方式..."
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1">季節</label>
+              <Select
+                isMulti
+                options={seasonOptions}
+                value={seasons}
+                onChange={setSeasons}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="選擇季節..."
+              />
             </div>
             <button className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition duration-200" onClick={handleSubmit}>保存</button>
           </div>
@@ -266,6 +315,7 @@
               <tr className="bg-gray-200">
                 <th className="border px-4 py-2">菜單名稱</th>
                 <th className="border px-4 py-2">材料</th>
+                <th className="border px-4 py-2">做法</th>
                 <th className="border px-4 py-2">季節</th>
                 <th className="border px-4 py-2">烹調方式</th>
                 <th className="border px-4 py-2">操作</th>
@@ -274,14 +324,13 @@
             <tbody>
               {filteredRecipes.map(recipe => {
                 const recipeIngredients = ingredients.filter(ing => recipe.ingredients.includes(ing.id));
-                const seasons = [...new Set(recipeIngredients.map(ing => ing.season))].join(', ');
-                const methods = [...new Set(recipeIngredients.flatMap(ing => ing.cookingMethods))].join(', ');
                 return (
                   <tr key={recipe.id}>
                     <td className="border px-4 py-2">{recipe.name}</td>
                     <td className="border px-4 py-2">{recipeIngredients.map(ing => ing.name).join(', ')}</td>
-                    <td className="border px-4 py-2">{seasons}</td>
-                    <td className="border px-4 py-2">{methods}</td>
+                    <td className="border px-4 py-2 whitespace-pre-wrap">{recipe.method || '-'}</td>
+                    <td className="border px-4 py-2">{recipe.seasons.join(', ')}</td>
+                    <td className="border px-4 py-2">{recipe.cookingMethods.join(', ')}</td>
                     <td className="border px-4 py-2">
                       <button
                         className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition duration-200"
@@ -303,8 +352,18 @@
       const [filters, setFilters] = useState({});
       const [results, setResults] = useState([]);
 
+      const ingredientOptions = ingredients.map(ing => ({ value: ing.id, label: ing.name }));
+      const seasonOptions = ['春', '夏', '秋', '冬', '四季'].map(s => ({ value: s, label: s }));
+      const cookingMethodOptions = ['蒸', '炒', '煮', '炸', '湯', '麵'].map(m => ({ value: m, label: m }));
+      const typeOptions = ['肉類', '蔬菜', '魚', '蛋', '海鮮', '豆類', '其他'].map(t => ({ value: t, label: t }));
+
       const handleSearch = () => {
-        setResults(getFilteredRecipes(filters));
+        setResults(getFilteredRecipes({
+          ingredients: filters.ingredients?.map(opt => opt.value) || [],
+          seasons: filters.seasons?.map(opt => opt.value) || [],
+          cookingMethods: filters.cookingMethods?.map(opt => opt.value) || [],
+          types: filters.types?.map(opt => opt.value) || []
+        }));
       };
 
       const handleRandom = () => {
@@ -314,24 +373,56 @@
 
       return (
         <div>
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">唔知食乜好</h2>
-          <div className="mb-6 bg-gray-50 p-4 rounded-lg shadow">
-            <select className="border p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={(e) => setFilters({ ...filters, ingredient: e.target.value || null })}>
-              <option value="">選擇材料</option>
-              {ingredients.map(ing => <option key={ing.id} value={ing.id}>{ing.name}</option>)}
-            </select>
-            <select className="border p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={(e) => setFilters({ ...filters, season: e.target.value || null })}>
-              <option value="">選擇季節</option>
-              {['春', '夏', '秋', '冬', '四季'].map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-            <select className="border p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={(e) => setFilters({ ...filters, cookingMethod: e.target.value || null })}>
-              <option value="">選擇烹調方式</option>
-              {['蒸', '炒', '煮', '炸', '湯', '麵'].map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-            <select className="border p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500" onChange={(e) => setFilters({ ...filters, type: e.target.value || null })}>
-              <option value="">選擇種類</option>
-              {['肉類', '蔬菜', '蛋', '海鮮', '豆類', '其他'].map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-2">唔知食乜好</h2>
+          <div className="mb-6 bg-gray-50 p-4 rounded-md shadow">
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1">材料</label>
+              <Select
+                isMulti
+                options={ingredientOptions}
+                value={filters.ingredients}
+                onChange={(selected) => setFilters({ ...filters, ingredients: selected })}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="選擇材料..."
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1">季節</label>
+              <Select
+                isMulti
+                options={seasonOptions}
+                value={filters.seasons}
+                onChange={(selected) => setFilters({ ...filters, seasons: selected })}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="選擇季節..."
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1">烹調方式</label>
+              <Select
+                isMulti
+                options={cookingMethodOptions}
+                value={filters.cookingMethods}
+                onChange={(selected) => setFilters({ ...filters, cookingMethods: selected })}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="選擇烹調方式..."
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1">種類</label>
+              <Select
+                isMulti
+                options={typeOptions}
+                value={filters.types}
+                onChange={(selected) => setFilters({ ...filters, types: selected })}
+                className="basic-multi-select"
+                classNamePrefix="select"
+                placeholder="選擇種類..."
+              />
+            </div>
             <div className="space-x-2">
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200" onClick={handleSearch}>搜尋</button>
               <button className="px-4 py-2 bg-purple-600 text-white rounded-lg shadow hover:bg-purple-700 transition duration-200" onClick={handleRandom}>隨機選取</button>
@@ -342,6 +433,7 @@
               <tr className="bg-gray-200">
                 <th className="border px-4 py-2">菜單名稱</th>
                 <th className="border px-4 py-2">材料</th>
+                <th className="border px-4 py-2">做法</th>
               </tr>
             </thead>
             <tbody>
@@ -351,6 +443,7 @@
                   <tr key={recipe.id}>
                     <td className="border px-4 py-2">{recipe.name}</td>
                     <td className="border px-4 py-2">{recipeIngredients.map(ing => ing.name).join(', ')}</td>
+                    <td className="border px-4 py-2 whitespace-pre-wrap">{recipe.method || '-'}</td>
                   </tr>
                 );
               })}
@@ -359,6 +452,8 @@
         </div>
       );
     };
+
+    const Select = window.ReactSelect.default;
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<App />);
