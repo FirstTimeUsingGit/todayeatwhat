@@ -8,21 +8,97 @@
   <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/react-select@5.7.0/dist/react-select.development.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/react-select@5.7.0/dist/css/react-select.min.css" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/js-md5@0.8.3/src/md5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-select@5.8.0/dist/react-select.development.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/react-select@5.8.0/dist/css/react-select.min.css" rel="stylesheet"/>
+  <style>
+    .select__option {
+      display: flex;
+      align-items: center;
+    }
+    .select__option input[type="checkbox"] {
+      margin-right: 8px;
+    }
+    .select__multi-value {
+      background-color: #e5e7eb;
+      border-radius: 4px;
+      padding: 2px 6px;
+      margin: 2px;
+    }
+    .select__multi-value__label {
+      color: #1f2937;
+    }
+    .select__multi-value__remove {
+      cursor: pointer;
+      color: #ef4444;
+    }
+    .select__control {
+      border: 1px solid #d1d5db !important;
+      border-radius: 0.375rem;
+    }
+    .select__menu {
+      z-index: 1000;
+    }
+  </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useEffect } = React;
 
+    const Auth = ({ onLogin }) => {
+      const [password, setPassword] = useState('');
+      const [error, setError] = useState('');
+
+      const handleSubmit = () => {
+        if (typeof md5 === 'undefined') {
+          console.error('MD5 library not loaded');
+          setError('系統錯誤，請稍後重試。');
+          return;
+        }
+        const input = password.toLowerCase().trim();
+        const hashedPassword = md5(input);
+        console.log('Input password:', input, 'MD5 hash:', hashedPassword); // Debug
+        const validHashes = [
+          '3ebfa301dc59196f18593c45e519287a', // MD5 of 'nathan'
+          'ca01f9b9c8dc5b3f47b3a090d1cf48c'   // MD5 of 'karen'
+        ];
+        // Fallback: plain-text check for debugging
+        if (validHashes.includes(hashedPassword) || ['nathan', 'karen'].includes(input)) {
+          onLogin();
+        } else {
+          setError('密碼錯誤，請輸入正確密碼。');
+        }
+      };
+
+      return (
+        <div className="container mx-auto p-6 max-w-md bg-white shadow-lg rounded-lg mt-6 text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">請輸入密碼</h1>
+          <input
+            type="password"
+            className="border p-2 rounded w-full mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="輸入密碼"
+          />
+          {error && <p className="text-red-600 mb-2">{error}</p>}
+          <button
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200"
+            onClick={handleSubmit}
+          >
+            提交
+          </button>
+        </div>
+      );
+    };
+
     const App = () => {
       const [ingredients, setIngredients] = useState([]);
       const [recipes, setRecipes] = useState([]);
       const [page, setPage] = useState('home');
+      const [fetchError, setFetchError] = useState('');
       const API_URL = 'https://todayeatwhat.vercel.app';
 
-      // Fetch data
       useEffect(() => {
         const fetchData = async () => {
           try {
@@ -31,14 +107,15 @@
             const jsonData = await response.json();
             setIngredients(jsonData.ingredients || []);
             setRecipes(jsonData.recipes || []);
+            setFetchError('');
           } catch (error) {
             console.error('Failed to fetch data:', error);
+            setFetchError('無法載入數據，請檢查網路或後端服務。');
           }
         };
         fetchData();
       }, []);
 
-      // Save data
       const saveData = async (updatedIngredients, updatedRecipes) => {
         try {
           const response = await fetch(`${API_URL}/data`, {
@@ -49,8 +126,10 @@
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           setIngredients(updatedIngredients);
           setRecipes(updatedRecipes);
+          setFetchError('');
         } catch (error) {
           console.error('Failed to save data:', error);
+          setFetchError('無法保存數據，請稍後重試。');
         }
       };
 
@@ -92,6 +171,7 @@
 
       return (
         <div className="container mx-auto p-6 max-w-4xl bg-white shadow-lg rounded-lg mt-6">
+          {fetchError && <p className="text-red-600 mb-4 text-center">{fetchError}</p>}
           <nav className="mb-6 flex justify-center space-x-4">
             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200" onClick={() => setPage('home')}>首頁</button>
             <button className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200" onClick={() => setPage('editIngredients')}>編輯材料</button>
@@ -212,12 +292,16 @@
     const EditRecipes = ({ recipes, ingredients, addRecipe, deleteRecipe }) => {
       const [name, setName] = useState('');
       const [selectedIngredients, setSelectedIngredients] = useState([]);
+      const [selectedType, setSelectedType] = useState(null);
       const [method, setMethod] = useState('');
       const [cookingMethods, setCookingMethods] = useState([]);
       const [seasons, setSeasons] = useState([]);
       const [searchTerm, setSearchTerm] = useState('');
 
-      const ingredientOptions = ingredients.map(ing => ({ value: ing.id, label: ing.name }));
+      const typeOptions = ['肉類', '蔬菜', '魚', '蛋', '海鮮', '豆類', '其他'].map(t => ({ value: t, label: t }));
+      const ingredientOptions = ingredients
+        .filter(ing => !selectedType || ing.type === selectedType.value)
+        .map(ing => ({ value: ing.id, label: ing.name }));
       const cookingMethodOptions = ['蒸', '炒', '煮', '炸', '湯', '麵'].map(m => ({ value: m, label: m }));
       const seasonOptions = ['春', '夏', '秋', '冬', '四季'].map(s => ({ value: s, label: s }));
 
@@ -232,6 +316,7 @@
           });
           setName('');
           setSelectedIngredients([]);
+          setSelectedType(null);
           setMethod('');
           setCookingMethods([]);
           setSeasons([]);
@@ -249,21 +334,43 @@
         );
       });
 
+      const CustomOption = ({ innerProps, label, isSelected }) => (
+        <div {...innerProps} className="select__option p-2 cursor-pointer hover:bg-gray-100">
+          <input type="checkbox" checked={isSelected} readOnly className="mr-2" />
+          {label}
+        </div>
+      );
+
       return (
         <div>
           <h2 className="text-2xl font-semibold text-gray-800 mb-2">編輯菜單</h2>
           <div className="mb-6 bg-gray-50 p-4 rounded-md shadow">
             <input className="border p-2 rounded w-full mb-2 focus:outline-none focus:border-blue-500" value={name} onChange={(e) => setName(e.target.value)} placeholder="菜單名稱" />
             <div className="mb-2">
-              <label className="block text-gray-700 mb-1">材料</label>
+              <label className="block text-gray-700 mb-1">材料種類</label>
+              <Select
+                options={typeOptions}
+                value={selectedType}
+                onChange={setSelectedType}
+                className="basic-multi-select"
+                placeholder="選擇材料種類..."
+                isClearable
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1">材料（已選：{selectedIngredients.length} 項）</label>
               <Select
                 isMulti
+                isSearchable
                 options={ingredientOptions}
                 value={selectedIngredients}
                 onChange={setSelectedIngredients}
+                components={{ Option: CustomOption }}
                 className="basic-multi-select"
-                classNamePrefix="select"
                 placeholder="選擇材料..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+                filterOption={(option, input) => option.label.toLowerCase().includes(input.toLowerCase())}
               />
             </div>
             <div className="mb-2">
@@ -280,24 +387,30 @@
               <label className="block text-gray-700 mb-1">烹調方式</label>
               <Select
                 isMulti
+                isSearchable
                 options={cookingMethodOptions}
                 value={cookingMethods}
                 onChange={setCookingMethods}
+                components={{ Option: CustomOption }}
                 className="basic-multi-select"
-                classNamePrefix="select"
                 placeholder="選擇烹調方式..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
               />
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 mb-1">季節</label>
               <Select
                 isMulti
+                isSearchable
                 options={seasonOptions}
                 value={seasons}
                 onChange={setSeasons}
+                components={{ Option: CustomOption }}
                 className="basic-multi-select"
-                classNamePrefix="select"
                 placeholder="選擇季節..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
               />
             </div>
             <button className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition duration-200" onClick={handleSubmit}>保存</button>
@@ -350,19 +463,22 @@
 
     const WhatToEat = ({ recipes, ingredients, getFilteredRecipes, getRandomRecipe }) => {
       const [filters, setFilters] = useState({});
+      const [selectedType, setSelectedType] = useState(null);
       const [results, setResults] = useState([]);
 
-      const ingredientOptions = ingredients.map(ing => ({ value: ing.id, label: ing.name }));
+      const typeOptions = ['肉類', '蔬菜', '魚', '蛋', '海鮮', '豆類', '其他'].map(t => ({ value: t, label: t }));
+      const ingredientOptions = ingredients
+        .filter(ing => !selectedType || ing.type === selectedType.value)
+        .map(ing => ({ value: ing.id, label: ing.name }));
       const seasonOptions = ['春', '夏', '秋', '冬', '四季'].map(s => ({ value: s, label: s }));
       const cookingMethodOptions = ['蒸', '炒', '煮', '炸', '湯', '麵'].map(m => ({ value: m, label: m }));
-      const typeOptions = ['肉類', '蔬菜', '魚', '蛋', '海鮮', '豆類', '其他'].map(t => ({ value: t, label: t }));
 
       const handleSearch = () => {
         setResults(getFilteredRecipes({
-          ingredients: filters.ingredients?.map(opt => opt.value) || [],
+          ingredients: filters.selectedIngredients?.map(opt => opt.value) || [],
           seasons: filters.seasons?.map(opt => opt.value) || [],
           cookingMethods: filters.cookingMethods?.map(opt => opt.value) || [],
-          types: filters.types?.map(opt => opt.value) || []
+          types: selectedType ? [selectedType.value] : []
         }));
       };
 
@@ -371,61 +487,78 @@
         setResults(randomRecipe ? [randomRecipe] : []);
       };
 
+      const CustomOption = ({ innerProps, label, isSelected }) => (
+        <div {...innerProps} className="select__option p-2 cursor-pointer">
+          <input type="checkbox" checked={isSelected} readOnly className="mr-2" />
+          {label}
+        </div>
+      );
+
       return (
         <div>
           <h2 className="text-2xl font-semibold text-gray-800 mb-2">唔知食乜好</h2>
           <div className="mb-6 bg-gray-50 p-4 rounded-md shadow">
             <div className="mb-2">
-              <label className="block text-gray-700 mb-1">材料</label>
+              <label className="block text-gray-700 mb-1">種類</label>
+              <Select
+                options={typeOptions}
+                value={selectedType}
+                onChange={setSelectedType}
+                className="basic-multi-select"
+                placeholder="選擇種類..."
+                isClearable
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1">材料 (已選：{filters.selectedIngredients?.length || 0} 項)</label>
               <Select
                 isMulti
+                isSearchable
                 options={ingredientOptions}
-                value={filters.ingredients}
-                onChange={(selected) => setFilters({ ...filters, ingredients: selected })}
+                value={filters.selectedIngredients}
+                onChange={(selected) => setFilters({ ...filters, selectedIngredients: selected })}
+                components={{ Option: CustomOption }}
                 className="basic-multi-select"
-                classNamePrefix="select"
                 placeholder="選擇材料..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+                filterOption={(option, input) => option.label.toLowerCase().includes(input.toLowerCase())}
               />
             </div>
             <div className="mb-2">
               <label className="block text-gray-700 mb-1">季節</label>
               <Select
                 isMulti
+                isSearchable
                 options={seasonOptions}
                 value={filters.seasons}
                 onChange={(selected) => setFilters({ ...filters, seasons: selected })}
+                components={{ Option: CustomOption }}
                 className="basic-multi-select"
-                classNamePrefix="select"
                 placeholder="選擇季節..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
               />
             </div>
+            <div>
             <div className="mb-2">
               <label className="block text-gray-700 mb-1">烹調方式</label>
               <Select
                 isMulti
+                isSearchable
                 options={cookingMethodOptions}
                 value={filters.cookingMethods}
                 onChange={(selected) => setFilters({ ...filters, cookingMethods: selected })}
+                components={{ Option: CustomOption }}
                 className="basic-multi-select"
-                classNamePrefix="select"
                 placeholder="選擇烹調方式..."
-              />
-            </div>
-            <div className="mb-2">
-              <label className="block text-gray-700 mb-1">種類</label>
-              <Select
-                isMulti
-                options={typeOptions}
-                value={filters.types}
-                onChange={(selected) => setFilters({ ...filters, types: selected })}
-                className="basic-multi-select"
-                classNamePrefix="select"
-                placeholder="選擇種類..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
               />
             </div>
             <div className="space-x-2">
               <button className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200" onClick={handleSearch}>搜尋</button>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg shadow hover:bg-purple-700 transition duration-200" onClick={handleRandom}>隨機選取</button>
+              <button className="px-4 py-2 bg-purple-600 text-white rounded-lg shadow hover:bg-purple-700 transition duration-200" onClick={handleRandom}>隨機選擇</button>
             </div>
           </div>
           <table className="table-auto w-full border-collapse border border-gray-300">
@@ -453,10 +586,35 @@
       );
     };
 
-    const Select = window.ReactSelect.default;
+    const Select = window.ReactSelect && window.ReactSelect.Select
+      ? window.ReactSelect.Select
+      : ({ isMulti, options, value, onChange, className, placeholder }) => (
+          <select
+            multiple={isMulti}
+            value={value ? value.map(v => v.value) : []}
+            onChange={(e) => {
+              const selected = Array.from(e.target.selectedOptions).map(opt => ({
+                value: opt.value,
+                label: opt.text
+              }));
+              onChange(selected);
+            }}
+            className={`border p-2 rounded w-full ${className}`}
+          >
+            <option value="" disabled>{placeholder}</option>
+            {options.map(opt => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        );
+
+    const Root = () => {
+      const [isAuthenticated, setIsAuthenticated] = useState(false);
+      return isAuthenticated ? <App /> : <Auth onLogin={() => setIsAuthenticated(true)} />;
+    };
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+    root.render(<Root />);
   </script>
 </body>
 </html>
