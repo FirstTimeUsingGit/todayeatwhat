@@ -1,4 +1,5 @@
-{
+{  "cookingMethods": ["蒸", "炒","煮", "炸","湯", "麵"],
+  "ingredientTypes": ["肉類", "蔬菜", "海鮮", "蛋", "豆類", "其他", "直接食用", "生食"],
   "ingredients": [
     {"id":1,"name":"雞肉","type":"肉類","season":"四季","cookingMethods":["炒","煮","蒸","炸"]},
 
