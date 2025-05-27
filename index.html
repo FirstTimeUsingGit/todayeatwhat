@@ -22,25 +22,992 @@
     .custom-tag { display: inline-flex; align-items: center; background-color: #e5e7eb; border-radius: 4px; padding: 4px 8px; margin: 2px; font-size: 0.875rem; min-width: 4rem; }
     .custom-tag-remove { cursor: pointer; color: #ef4444; margin-left: 4px; font-weight: bold; }
     @media (max-width: 640px) {
-      .select__control, .select__option, button, button, input, textarea { font-size: 16px; min-height: 3rem; }
+      .select__control, .select__option, button, input, textarea { font-size: 16px; min-height: 3rem; }
       .custom-tag { font-size: 14px; padding: 6px 10px; }
       .custom-tag-remove { font-size: 14px; }
       table { display: block; overflow-x: auto; white-space: nowrap; }
     }
   </style>
 </head>
-<body class="bg-gray-100 min-hmin-height">
+<body class="bg-gray-100 min-h-screen">
   <div id="root"></div>
   <script type="text/babel">
     const { useState, useEffect } = React;
 
+    // Auth Component
+    const Auth = ({ onLogin }) => {
+      const [password, setPassword] = useState('');
+      const [error, setError] = useState('');
+
+      const handleSubmit = () => {
+        if (typeof md5 !== 'function') {
+          console.error('MD5 library not loaded');
+          setError('系統錯誤：無法載入加密功能，請稍後重試。');
+          return;
+        }
+
+        const input = password.trim();
+        const hashedPassword = md5(input);
+        const validHashes = [
+          '1404834e52a4c6cac9444f1fb3c62d3c',
+          'ba952731f97fb058035aa399b1cb3d5c'
+        ];
+        console.log('Input:', input, 'Hashed:', hashedPassword);
+
+        if (validHashes.includes(hashedPassword)) {
+          localStorage.setItem('isAuthenticated', 'true');
+          onLogin();
+        } else {
+          setError('密碼錯誤，請輸入正確密碼。');
+        }
+      };
+
+      return (
+        <div className="container mx-auto p-4 sm:p-6 max-w-md bg-white shadow-lg rounded-lg mt-4 sm:mt-6 text-center">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">請輸入密碼</h1>
+          <input
+            type="password"
+            className="border p-2 rounded w-full mb-2 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="輸入密碼"
+          />
+          {error && <p className="text-red-600 mb-2 text-sm sm:text-base">{error}</p>}
+          <button
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200 text-base sm:text-lg"
+            onClick={handleSubmit}
+          >
+            提交
+          </button>
+        </div>
+      );
+    };
+
+    // TagEdit Component
+    const TagEdit = ({ cookingMethods, ingredientTypes, saveData, ingredients, recipes }) => {
+      const [newCookingMethod, setNewCookingMethod] = useState('');
+      const [editCookingMethod, setEditCookingMethod] = useState('');
+      const [editCookingMethodIndex, setEditCookingMethodIndex] = useState(null);
+      const [newIngredientType, setNewIngredientType] = useState('');
+      const [editIngredientType, setEditIngredientType] = useState('');
+      const [editIngredientTypeIndex, setEditIngredientTypeIndex] = useState(null);
+
+      const handleAddCookingMethod = () => {
+        if (newCookingMethod && !cookingMethods.includes(newCookingMethod)) {
+          const updatedCookingMethods = [...cookingMethods, newCookingMethod];
+          saveData({
+            ingredients,
+            recipes,
+            cookingMethods: updatedCookingMethods,
+            ingredientTypes
+          });
+          setNewCookingMethod('');
+        }
+      };
+
+      const handleEditCookingMethod = (index) => {
+        setEditCookingMethod(cookingMethods[index]);
+        setEditCookingMethodIndex(index);
+      };
+
+      const handleUpdateCookingMethod = () => {
+        if (editCookingMethod && editCookingMethodIndex !== null) {
+          const updatedCookingMethods = [...cookingMethods];
+          updatedCookingMethods[editCookingMethodIndex] = editCookingMethod;
+          saveData({
+            ingredients,
+            recipes,
+            cookingMethods: updatedCookingMethods,
+            ingredientTypes
+          });
+          setEditCookingMethod('');
+          setEditCookingMethodIndex(null);
+        }
+      };
+
+      const handleDeleteCookingMethod = (index) => {
+        const updatedCookingMethods = cookingMethods.filter((_, i) => i !== index);
+        saveData({
+          ingredients,
+          recipes,
+          cookingMethods: updatedCookingMethods,
+          ingredientTypes
+        });
+      };
+
+      const handleAddIngredientType = () => {
+        if (newIngredientType && !ingredientTypes.includes(newIngredientType)) {
+          const updatedIngredientTypes = [...ingredientTypes, newIngredientType];
+          saveData({
+            ingredients,
+            recipes,
+            cookingMethods,
+            ingredientTypes: updatedIngredientTypes
+          });
+          setNewIngredientType('');
+        }
+      };
+
+      const handleEditIngredientType = (index) => {
+        setEditIngredientType(ingredientTypes[index]);
+        setEditIngredientTypeIndex(index);
+      };
+
+      const handleUpdateIngredientType = () => {
+        if (editIngredientType && editIngredientTypeIndex !== null) {
+          const updatedIngredientTypes = [...ingredientTypes];
+          updatedIngredientTypes[editIngredientTypeIndex] = editIngredientType;
+          saveData({
+            ingredients,
+            recipes,
+            cookingMethods,
+            ingredientTypes: updatedIngredientTypes
+          });
+          setEditIngredientType('');
+          setEditIngredientTypeIndex(null);
+        }
+      };
+
+      const handleDeleteIngredientType = (index) => {
+        const updatedIngredientTypes = ingredientTypes.filter((_, i) => i !== index);
+        saveData({
+          ingredients,
+          recipes,
+          cookingMethods,
+          ingredientTypes: updatedIngredientTypes
+        });
+      };
+
+      return (
+        <div>
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">標籤管理</h2>
+          <div className="mb-6 bg-gray-50 p-4 rounded-md shadow">
+            <h3 className="text-lg font-medium text-gray-700 mb-2">烹調方式管理</h3>
+            <div className="flex gap-2 mb-4">
+              <input
+                className="border p-2 rounded w-full text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={editCookingMethodIndex !== null ? editCookingMethod : newCookingMethod}
+                onChange={(e) => editCookingMethodIndex !== null ? setEditCookingMethod(e.target.value) : setNewCookingMethod(e.target.value)}
+                placeholder="輸入烹調方式（如：烤）"
+              />
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200 text-base sm:text-lg"
+                onClick={editCookingMethodIndex !== null ? handleUpdateCookingMethod : handleAddCookingMethod}
+              >
+                {editCookingMethodIndex !== null ? '更新' : '添加'}
+              </button>
+              {editCookingMethodIndex !== null && (
+                <button
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-gray-700 transition duration-200 text-base sm:text-lg"
+                  onClick={() => {
+                    setEditCookingMethod('');
+                    setEditCookingMethodIndex(null);
+                  }}
+                >
+                  取消
+                </button>
+              )}
+            </div>
+            <table className="table-auto w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border px-4 py-2 text-sm sm:text-base">烹調方式</th>
+                  <th className="border px-4 py-2 text-sm sm:text-base">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {cookingMethods.map((cm, index) => (
+                  <tr key={index}>
+                    <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base">{cm}</td>
+                    <td className="border px-2 sm:px-4 py-2 flex gap-2">
+                      <button
+                        className="px-2 sm:px-4 py-1 sm:py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200 text-sm sm:text-base"
+                        onClick={() => handleEditCookingMethod(index)}
+                      >
+                        編輯
+                      </button>
+                      <button
+                        className="px-2 sm:px-4 py-1 sm:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200 text-sm sm:text-base"
+                        onClick={() => handleDeleteCookingMethod(index)}
+                      >
+                        刪除
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="mb-6 bg-gray-50 p-4 rounded-md shadow">
+            <h3 className="text-lg font-medium text-gray-700 mb-2">種類管理</h3>
+            <div className="flex gap-2 mb-4">
+              <input
+                className="border p-2 rounded w-full text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={editIngredientTypeIndex !== null ? editIngredientType : newIngredientType}
+                onChange={(e) => editIngredientTypeIndex !== null ? setEditIngredientType(e.target.value) : setNewIngredientType(e.target.value)}
+                placeholder="輸入種類（如：穀物）"
+              />
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200 text-base sm:text-lg"
+                onClick={editIngredientTypeIndex !== null ? handleUpdateIngredientType : handleAddIngredientType}
+              >
+                {editIngredientTypeIndex !== null ? '更新' : '添加'}
+              </button>
+              {editIngredientTypeIndex !== null && (
+                <button
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-gray-700 transition duration-200 text-base sm:text-lg"
+                  onClick={() => {
+                    setEditIngredientType('');
+                    setEditIngredientTypeIndex(null);
+                  }}
+                >
+                  取消
+                </button>
+              )}
+            </div>
+            <table className="table-auto w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border px-4 py-2 text-sm sm:text-base">種類</th>
+                  <th className="border px-4 py-2 text-sm sm:text-base">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ingredientTypes.map((type, index) => (
+                  <tr key={index}>
+                    <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base">{type}</td>
+                    <td className="border px-2 sm:px-4 py-2 flex gap-2">
+                      <button
+                        className="px-2 sm:px-4 py-1 sm:py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200 text-sm sm:text-base"
+                        onClick={() => handleEditIngredientType(index)}
+                      >
+                        編輯
+                      </button>
+                      <button
+                        className="px-2 sm:px-4 py-1 sm:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-200 text-sm sm:text-base"
+                        onClick={() => handleDeleteIngredientType(index)}
+                      >
+                        刪除
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    };
+
+    // EditIngredients Component
+    const EditIngredients = ({ ingredients, recipes, cookingMethods, ingredientTypes, saveData }) => {
+      const [name, setName] = useState('');
+      const [type, setType] = useState('');
+      const [season, setSeason] = useState('');
+      const [selectedCookingMethods, setSelectedCookingMethods] = useState([]);
+      const [searchTerm, setSearchTerm] = useState('');
+      const [filterCookingMethods, setFilterCookingMethods] = useState([]);
+      const [editIngredientId, setEditIngredientId] = useState(null);
+
+      const seasonOptions = ['春', '夏', '秋', '冬', '四季'].map(s => ({ value: s, label: s }));
+      const cookingMethodOptions = cookingMethods.map(m => ({ value: m, label: m }));
+      const typeOptions = ingredientTypes.map(t => ({ value: t, label: t }));
+
+      const handleSubmit = () => {
+        if (name && type && season && selectedCookingMethods.length > 0) {
+          const ingredientData = {
+            name,
+            type,
+            season,
+            cookingMethods: selectedCookingMethods.map(m => m.value)
+          };
+          let updatedIngredients = [...ingredients];
+          if (editIngredientId) {
+            updatedIngredients = ingredients.map(ing =>
+              ing.id === editIngredientId ? { ...ing, ...ingredientData } : ing
+            );
+          } else {
+            updatedIngredients.push({ id: Date.now(), ...ingredientData });
+          }
+          saveData({
+            ingredients: updatedIngredients,
+            recipes,
+            cookingMethods,
+            ingredientTypes
+          });
+          setEditIngredientId(null);
+          setName('');
+          setType('');
+          setSeason('');
+          setSelectedCookingMethods([]);
+        }
+      };
+
+      const handleEdit = (ingredient) => {
+        setEditIngredientId(ingredient.id);
+        setName(ingredient.name);
+        setType(ingredient.type);
+        setSeason(ingredient.season);
+        setSelectedCookingMethods(ingredient.cookingMethods.map(m => ({ value: m, label: m })));
+      };
+
+      const handleCancel = () => {
+        setEditIngredientId(null);
+        setName('');
+        setType('');
+        setSeason('');
+        setSelectedCookingMethods([]);
+      };
+
+      const handleDelete = (id) => {
+        const updatedIngredients = ingredients.filter(ing => ing.id !== id);
+        saveData({
+          ingredients: updatedIngredients,
+          recipes,
+          cookingMethods,
+          ingredientTypes
+        });
+      };
+
+      const filteredIngredients = ingredients.filter(ing => {
+        const matchesSearchTerm =
+          ing.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          ing.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          ing.season.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          ing.cookingMethods.some(method => method.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesCookingMethods =
+          filterCookingMethods.length === 0 ||
+          filterCookingMethods.some(method => ing.cookingMethods.includes(method.value));
+        return matchesSearchTerm && matchesCookingMethods;
+      });
+
+      const CustomOption = ({ innerProps, label, isSelected }) => (
+        <div {...innerProps} className="select__option p-2 cursor-pointer hover:bg-gray-100">
+          <input type="checkbox" checked={isSelected} readOnly className="mr-2" />
+          {label}
+        </div>
+      );
+
+      return (
+        <div>
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">編輯材料</h2>
+          <div className="mb-4 sm:mb-6 bg-gray-50 p-4 rounded-md shadow">
+            <h3 className="text-lg font-medium text-gray-700 mb-2">{editIngredientId ? '更新材料' : '新增材料'}</h3>
+            <input
+              className="border p-2 rounded w-full mb-2 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="材料名稱"
+            />
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">種類</label>
+              <Select
+                options={typeOptions}
+                value={type ? { value: type, label: type } : null}
+                onChange={(selected) => setType(selected ? selected.value : '')}
+                className="basic-multi-select"
+                placeholder="選擇種類..."
+                isClearable
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">季節</label>
+              <Select
+                options={seasonOptions}
+                value={season ? { value: season, label: season } : null}
+                onChange={(selected) => setSeason(selected ? selected.value : '')}
+                className="basic-multi-select"
+                placeholder="選擇季節..."
+                isClearable
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">烹調方式</label>
+              <Select
+                isMulti
+                isSearchable
+                options={cookingMethodOptions}
+                value={selectedCookingMethods}
+                onChange={setSelectedCookingMethods}
+                components={{ Option: CustomOption }}
+                className="basic-multi-select"
+                placeholder="選擇烹調方式..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition duration-200 text-base sm:text-lg"
+                onClick={handleSubmit}
+              >
+                {editIngredientId ? '更新' : '保存'}
+              </button>
+              {editIngredientId && (
+                <button
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-gray-700 transition duration-200 text-base sm:text-lg"
+                  onClick={handleCancel}
+                >
+                  取消
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="mb-4">
+            <input
+              className="border p-2 rounded w-full mb-2 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="搜尋材料..."
+            />
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">烹調方式</label>
+              <Select
+                isMulti
+                isSearchable
+                options={cookingMethodOptions}
+                value={filterCookingMethods}
+                onChange={setFilterCookingMethods}
+                components={{ Option: CustomOption }}
+                className="basic-multi-select"
+                placeholder="選擇搜尋的烹調方式..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+              />
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="table-auto w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">食材名稱</th>
+                  <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">種類</th>
+                  <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">季節</th>
+                  <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">烹調方式</th>
+                  <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredIngredients.map(ing => (
+                  <tr key={ing.id}>
+                    <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base">{ing.name}</td>
+                    <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base">{ing.type}</td>
+                    <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base">{ing.season}</td>
+                    <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base">{ing.cookingMethods.join(', ')}</td>
+                    <td className="border px-2 sm:px-4 py-2 flex gap-2">
+                      <button
+                        className="px-2 sm:px-4 py-1 sm:py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-200 text-sm sm:text-base"
+                        onClick={() => handleEdit(ing)}
+                      >
+                        編輯
+                      </button>
+                      <button
+                        className="px-2 sm:px-4 py-1 sm:py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition duration-200 text-sm sm:text-base"
+                        onClick={() => handleDelete(ing.id)}
+                      >
+                        刪除
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    };
+
+    // EditRecipes Component
+    const EditRecipes = ({ recipes, ingredients, cookingMethods, ingredientTypes, saveData }) => {
+      const [name, setName] = useState('');
+      const [selectedType, setSelectedType] = useState(null);
+      const [selectedIngredients, setSelectedIngredients] = useState([]);
+      const [method, setMethod] = useState('');
+      const [selectedRecipesCookingMethods, setSelectedRecipesCookingMethods] = useState([]);
+      const [seasons, setSeasons] = useState([]);
+      const [searchTerm, setSearchTerm] = useState('');
+      const [selectedIngredientsFilter, setSelectedIngredientsFilter] = useState([]);
+      const [editRecipeId, setEditRecipeId] = useState(null);
+
+      const typeOptions = ingredientTypes.map(t => ({ value: t, label: t }));
+      const ingredientOptions = selectedType
+        ? ingredients
+            .filter(ing => ing.type === selectedType.value)
+            .map(ing => ({ value: ing.id, label: ing.name }))
+        : [];
+      const ingredientFilterOptions = ingredients.map(ing => ({ value: ing.id, label: ing.name }));
+      const cookingMethodOptions = cookingMethods.map(m => ({ value: m, label: m }));
+      const seasonOptions = ['春', '夏', '秋', '冬', '四季'].map(s => ({ value: s, label: s }));
+
+      const handleSubmit = () => {
+        if (name && selectedIngredients.length > 0 && method && selectedRecipesCookingMethods.length > 0 && seasons.length > 0) {
+          const recipeData = {
+            name,
+            ingredients: selectedIngredients.map(ing => ing.value),
+            method,
+            cookingMethods: selectedRecipesCookingMethods.map(m => m.value),
+            seasons: seasons.map(s => s.value)
+          };
+          let updatedRecipes = [...recipes];
+          if (editRecipeId) {
+            updatedRecipes = recipes.map(recipe =>
+              recipe.id === editRecipeId ? { ...recipe, ...recipeData } : recipe
+            );
+          } else {
+            updatedRecipes.push({ id: Date.now(), ...recipeData });
+          }
+          saveData({
+            ingredients,
+            recipes: updatedRecipes,
+            cookingMethods,
+            ingredientTypes
+          });
+          setEditRecipeId(null);
+          setName('');
+          setSelectedType(null);
+          setSelectedIngredients([]);
+          setMethod('');
+          setSelectedRecipesCookingMethods([]);
+          setSeasons([]);
+        }
+      };
+
+      const handleEdit = (recipe) => {
+        setEditRecipeId(recipe.id);
+        setName(recipe.name);
+        setSelectedIngredients(
+          ingredients
+            .filter(ing => recipe.ingredients.includes(ing.id))
+            .map(ing => ({ value: ing.id, label: ing.name }))
+        );
+        setMethod(recipe.method || '');
+        setSelectedRecipesCookingMethods(recipe.cookingMethods.map(cm => ({ value: cm, label: cm })));
+        setSeasons(recipe.seasons.map(s => ({ value: s, label: s })));
+      };
+
+      const handleCancel = () => {
+        setEditRecipeId(null);
+        setName('');
+        setSelectedType(null);
+        setSelectedIngredients([]);
+        setMethod('');
+        setSelectedRecipesCookingMethods([]);
+        setSeasons([]);
+      };
+
+      const handleDelete = (id) => {
+        const updatedRecipes = recipes.filter(recipe => recipe.id !== id);
+        saveData({
+          ingredients,
+          recipes: updatedRecipes,
+          cookingMethods,
+          ingredientTypes
+        });
+      };
+
+      const removeIngredient = (id) => {
+        setSelectedIngredients(prev => prev.filter(ing => ing.value !== id));
+      };
+
+      const filteredRecipes = recipes.filter(recipe => {
+        const recipeIngredients = ingredients.filter(ing => recipe.ingredients.includes(ing.id));
+        const matchesSearchTerm =
+          recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          recipeIngredients.some(ing => ing.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          recipe.seasons.some(s => s.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          recipe.cookingMethods.some(cm => cm.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (recipe.method && recipe.method.toLowerCase().includes(searchTerm.toLowerCase()));
+        const matchesIngredients =
+          selectedIngredientsFilter.length === 0 ||
+          recipeIngredients.some(ing => selectedIngredientsFilter.some(filter => filter.value === ing.id));
+        return matchesSearchTerm && matchesIngredients;
+      });
+
+      const CustomOption = ({ innerProps, label, isSelected }) => (
+        <div {...innerProps} className="select__option p-2 cursor-pointer hover:bg-gray-100">
+          <input type="checkbox" checked={isSelected} readOnly className="mr-2" />
+          {label}
+        </div>
+      );
+
+      return (
+        <div>
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">編輯菜單</h2>
+          <div className="mb-4 sm:mb-6 bg-gray-50 p-4 rounded-md shadow">
+            <h3 className="text-lg font-medium text-gray-700 mb-2">{editRecipeId ? '更新菜單' : '新增菜單'}</h3>
+            <input
+              className="border p-2 rounded-md w-full mb-2 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="菜單名稱"
+            />
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">材料類型</label>
+              <Select
+                options={typeOptions}
+                value={selectedType}
+                onChange={setSelectedType}
+                className="basic-multi-select"
+                placeholder="選擇種類..."
+                isClearable
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">食材</label>
+              <Select
+                isMulti
+                isSearchable
+                options={ingredientOptions}
+                value={selectedIngredients}
+                onChange={setSelectedIngredients}
+                components={{ Option: CustomOption }}
+                className="basic-multi-select"
+                placeholder={selectedType ? "選擇食材..." : "請先選擇材料類型"}
+                isDisabled={!selectedType}
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+              />
+              {selectedIngredients?.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selectedIngredients.map(ing => (
+                    <span key={ing.value} className="custom-tag">
+                      {ing.label}
+                      <span
+                        className="custom-tag-remove"
+                        onClick={() => removeIngredient(ing.value)}
+                      >
+                        ×
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">做法</label>
+              <textarea
+                className="border p-2 rounded-md w-full text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+                placeholder="輸入做法..."
+                rows="4"
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">烹調方式</label>
+              <Select
+                isMulti
+                isSearchable
+                options={cookingMethodOptions}
+                value={selectedRecipesCookingMethods}
+                onChange={setSelectedRecipesCookingMethods}
+                components={{ Option: CustomOption }}
+                className="basic-multi-select"
+                placeholder="選擇烹調方式..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">季節</label>
+              <Select
+                isMulti
+                isSearchable
+                options={seasonOptions}
+                value={seasons}
+                onChange={setSeasons}
+                components={{ Option: CustomOption }}
+                className="basic-multi-select"
+                placeholder="選擇季節..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                className="px-4 py-2 bg-green-600 text-white rounded-lg shadow hover:bg-green-700 transition duration-200 text-base sm:text-lg"
+                onClick={handleSubmit}
+              >
+                {editRecipeId ? '更新' : '保存'}
+              </button>
+              {editRecipeId && (
+                <button
+                  className="px-4 py-2 bg-gray-600 text-white rounded-lg shadow hover:bg-gray-700 transition duration-200 text-base sm:text-lg"
+                  onClick={handleCancel}
+                >
+                  取消
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="mb-4">
+            <input
+              className="border p-2 rounded-md w-full mb-2 text-base sm:text-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="搜尋菜單..."
+            />
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">食材</label>
+              <Select
+                isMulti
+                isSearchable
+                options={ingredientFilterOptions}
+                value={selectedIngredientsFilter}
+                onChange={setSelectedIngredientsFilter}
+                components={{ Option: CustomOption }}
+                className="basic-multi-select"
+                placeholder="選擇食材..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+              />
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="table-auto w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">菜單名稱</th>
+                  <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">食材</th>
+                  <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">做法</th>
+                  <th className="border px-2 sm:px-4 py-2 sm:text-sm sm:text-base">季節</th>
+                  <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">烹調方式</th>
+                  <th className="border px-2 sm:px-4 py-2 text-sm sm:text-base">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredRecipes.map(recipe => {
+                  const recipeIngredients = ingredients.filter(ing => recipe.ingredients.includes(ing.id));
+                  return (
+                    <tr key={recipe.id}>
+                      <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base">{recipe.name}</td>
+                      <td className="order px-2 sm:px-4 py-2 text-sm sm:text-base">{recipeIngredients.map(ing => ing.name).join(', ')}</td>
+                      <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base whitespace-pre-line">{recipe.method || '-'}</td>
+                      <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base">{recipe.seasons.join(', ')}</td>
+                      <td className="border px-2 sm:px-4 py-2 sm:text-sm sm:text-base">{recipe.cookingMethods.join(', ')}</td>
+                      <td className="border px-2 sm:px-4 py-2 flex gap-2">
+                        <button
+                          className="px-2 sm:px-4 py-1 sm:py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-300 text-sm sm:text-base"
+                          onClick={() => handleEdit(recipe)}
+                        >
+                          編輯
+                        </button>
+                        <button
+                          className="px-2 sm:px-4 py-1 sm:py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-700 transition duration-300"
+                          onClick={() => handleDelete(recipe.id)}
+                        >
+                          刪除
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    };
+
+    // WhatToEat Component
+    const WhatToEat = ({ recipes, ingredients, cookingMethods, ingredientTypes }) => {
+      const [filters, setFilters] = useState({});
+      const [selectedType, setSelectedType] = useState(null);
+      const [results, setResults] = useState([]);
+
+      const typeOptions = ingredientTypes.map(t => ({ value: t, label: t }));
+      const ingredientOptions = selectedType
+        ? ingredients
+            .filter(ing => ing.type === selectedType.value)
+            .map(ing => ({ value: ing.id, label: ing.name }))
+        : [];
+      const seasonOptions = ['春', '夏', '秋', '冬', '四季'].map(s => ({ value: s, label: s }));
+      const cookingMethodOptions = cookingMethods.map(m => ({ value: m, label: m }));
+      const ingredientTypeOptions = ingredientTypes.map(type => ({ value: type, label: type }));
+
+      const getFilteredRecipes = (filters) => {
+        return recipes.filter(recipe => {
+          const recipeIngredients = ingredients.filter(ing => recipe.ingredients.includes(ing.id));
+          return (
+            (!filters?.ingredients || filters.ingredients.length === 0 || filters.ingredients.some(ingId => recipe.ingredients.includes(ingId.value))) &&
+            (!filters?.seasons || filters.seasons.length === 0 || recipe.seasons.some(s => filters.seasons.map(s => s.value).includes(s))) &&
+            (!filters?.cookingMethods || filters.cookingMethods.length === 0 || recipe.cookingMethods.some(cm => filters.cookingMethods.map(m => m.value).includes(cm))) &&
+            (!filters?.types || filters.types.length === 0 || recipeIngredients.some(ing => filters.types.map(t => t.value).includes(ing.type)))
+          );
+        });
+      };
+
+      const getRandomRecipe = () => {
+        return recipes[Math.floor(Math.random() * recipes.length)];
+      };
+
+      const handleSearch = () => {
+        setResults(getFilteredRecipes({
+          ingredients: filters?.ingredients || [],
+          seasons: filters?.seasons || [],
+          cookingMethods: filters?.cookingMethods || [],
+          types: filters?.types || []
+        }));
+      };
+
+      const handleRandom = () => {
+        const randomRecipe = getRandomRecipe();
+        setResults(randomRecipe ? [randomRecipe] : []);
+      };
+
+      const removeIngredient = (id) => {
+        setFilters(prev => ({
+          ...prev,
+          ingredients: prev.ingredients?.filter(ing => ing.value !== id) || []
+        }));
+      };
+
+      const CustomOption = ({ innerProps, label, isSelected }) => (
+        <div {...innerProps} className="select__option p-2 cursor-pointer hover:bg-gray-100">
+          <input type="checkbox" checked={isSelected} readOnly className="mr-2" />
+          {label}
+        </div>
+      );
+
+      return (
+        <div>
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-2">唔知食乜好</h2>
+          <div className="mb-4 sm:mb-6 bg-gray-50 p-4 rounded-md shadow">
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">材料類型</label>
+              <Select
+                options={typeOptions}
+                value={selectedType}
+                onChange={setSelectedType}
+                className="basic-multi-select"
+                placeholder="選擇種類..."
+                isClearable
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">食材</label>
+              <Select
+                isMulti
+                isSearchable
+                options={ingredientOptions}
+                value={filters?.ingredients || []}
+                onChange={(selected) => setFilters(prev => ({ ...prev, ingredients: selected}))}
+                components={{ Option: CustomOption }}
+                className="basic-multi-select"
+                placeholder={selectedType ? "選擇食材..." : "請先選擇材料類型"}
+                isDisabled={!selectedType}
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+              />
+              {filters?.ingredients?.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {filters.ingredients.map(ing => (
+                    <span key={ing.value} className="custom-tag">
+                      {ing.label}
+                      <span
+                        className="custom-tag-remove"
+                        onClick={() => removeIngredient(ing.value)}
+                      >
+                        ×
+                      </span>
+                    </span>
+                  ))}
+              </div>
+              )}
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">季節</label>
+              <Select
+                isMulti
+                isSearchable
+                options={seasonOptions}
+                value={filters?.seasons || []}
+                onChange={(selected) => setFilters(prev => ({ ...prev, seasons: selected }))}
+                components={{ Option: CustomOption }}
+                className="basic-multi-select"
+                placeholder="選擇季節..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">烹調方式</label>
+              <Select
+                isMulti
+                isSearchable
+                options={cookingMethodOptions}
+                value={filters?.cookingMethods || []}
+                onChange={(selected) => setFilters(prev => ({ ...prev, cookingMethods: selected }))}
+                components={{ Option: CustomOption }}
+                className="basic-multi-select"
+                placeholder="Select options..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+              />
+            </div>
+            <div className="mb-2">
+              <label className="block text-gray-700 mb-1 text-sm sm:text-base">種類</label>
+              <Select
+                isMulti
+                isSearchable
+                options={ingredientTypeOptions}
+                value={filters?.types || []}
+                onChange={(selected) => setFilters(prev => ({ ...prev, types: selected }))}
+                components={{ Option: CustomOption }}
+                className="basic-multi-select"
+                placeholder="選擇種類..."
+                hideSelectedOptions={false}
+                closeMenuOnSelect={false}
+              />
+            </div>
+            <div className="flex gap-2">
+              <button
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition duration-300 text-base sm:text-base">                搜尋
+              </button>
+              <button
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg shadow hover:bg-purple-bg-blue-700 transition duration-300 text-sm sm:text-base"
+                onClick={handleRandom}
+              >
+                隨機選取
+              </button>
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="table-auto w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-200">
+                  <th className="border px-4 py-2 text-sm sm:text-base">菜單名稱</th>
+                  <th className="border px-4 py-2 text-sm sm:text-base">食材</th>
+                  <th className="border px-4 py-2 text-sm sm:text-base">做法</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.map(recipe => {
+                  const recipeIngredients = ingredients.filter(ing => recipe.ingredients.includes(ing.id));
+                  return (
+                    <tr key={recipe.id}>
+                      <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base">{recipe.name}</td>
+                      <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base">{recipeIngredients.map(ing => ing.name).join(', ')}</td>
+                      <td className="border px-2 sm:px-4 py-2 text-sm sm:text-base whitespace-pre-line">{recipe.method || '-'}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    };
+
+    // App Component
     const App = ({ onLogout }) => {
       const [page, setPage] = useState('home');
-      const [ingredientsSelected, setIngredients] = useState([]);
+      const [ingredients, setIngredients] = useState([]);
       const [recipes, setRecipes] = useState([]);
-      const [cookingMethodsSelected, setCookingMethods] = useState([]);
-      const [ingredientTypesSelected, setIngredientTypes] = useState([]);
+      const [cookingMethods, setCookingMethods] = useState([]);
+      const [ingredientTypes, setIngredientTypes] = useState([]);
       const [fetchErrorMessage, setFetchError] = useState('');
+
       const API_URL = 'https://todayeatwhat.vercel.app';
 
       useEffect(() => {
@@ -56,7 +1023,7 @@
             setFetchError('');
           } catch (error) {
             console.error('Failed to fetch data:', error);
-            setFetchError('無法載入數據，請檢查網路或後端服務。');
+            setFetchError('無法載入數據，請檢查網絡或後端服務。');
           }
         };
         fetchData();
@@ -67,7 +1034,7 @@
           const response = await fetch(`${API_URL}/data`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(updatedData),
+            body: JSON.stringify(updatedData)
           });
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           setIngredients(updatedData.ingredients || []);
@@ -105,64 +1072,60 @@
             </div>
           )}
 
-          {page === 'tagEdit' && window.TagEdit && (
-            <window.TagEdit
-              cookingMethods={cookingMethodsSelected}
-              ingredientTypes={ingredientTypesSelected}
+          {page === 'tagEdit' && (
+            <TagEdit
+              cookingMethods={cookingMethods}
+              ingredientTypes={ingredientTypes}
               saveData={saveData}
-              ingredients={ingredientsSelected}
+              ingredients={ingredients}
               recipes={recipes}
             />
           )}
 
-          {page === 'editIngredients' && window.EditIngredients && (
-            <window.EditIngredients
-              ingredients={ingredientsSelected}
+          {page === 'editIngredients' && (
+            <EditIngredients
+              ingredients={ingredients}
               recipes={recipes}
-              cookingMethods={cookingMethodsSelected}
-              ingredientTypes={ingredientTypesSelected}
+              cookingMethods={cookingMethods}
+              ingredientTypes={ingredientTypes}
               saveData={saveData}
             />
           )}
 
-          {page === 'editRecipes' && window.EditRecipes && (
-            <window.EditRecipes
+          {page === 'editRecipes' && (
+            <EditRecipes
               recipes={recipes}
-              ingredients={ingredientsSelected}
-              cookingMethods={cookingMethodsSelected}
-              ingredientTypes={ingredientTypesSelected}
+              ingredients={ingredients}
+              cookingMethods={cookingMethods}
+              ingredientTypes={ingredientTypes}
               saveData={saveData}
             />
           )}
 
-          {page === 'whatToEat' && window.WhatToEat && (
-            <window.WhatToEat
+          {page === 'whatToEat' && (
+            <WhatToEat
               recipes={recipes}
-              ingredients={ingredientsSelected}
-              cookingMethods={cookingMethodsSelected}
-              ingredientTypes={ingredientTypesSelected}
+              ingredients={ingredients}
+              cookingMethods={cookingMethods}
+              ingredientTypes={ingredientTypes}
             />
           )}
         </div>
       );
     };
 
+    // Root Component
     const Root = () => {
       const [isAuthenticated, setIsAuthenticated] = useState(localStorage.getItem('isAuthenticated') === 'true');
       return isAuthenticated ? (
         <App onLogout={() => setIsAuthenticated(false)} />
       ) : (
-        window.Auth && <window.Auth onLogin={() => setIsAuthenticated(true)} />
+        <Auth onLogin={() => setIsAuthenticated(true)} />
       );
     };
 
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(<Root />);
   </script>
-  <script src="js/AuthPage.js"></script>
-  <script src="js/TagEdit.js"></script>
-  <script src="js/IngredientEdit.js"></script>
-  <script src="js/RecipeEdit.js"></script>
-  <script src="js/WhatToEat.js"></script>
 </body>
 </html>
