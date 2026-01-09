@@ -50,7 +50,7 @@
             font-weight: bold;
             color: #333;
         }
-        select, input {
+        select, input, textarea {
             width: 100%;
             padding: 12px;
             border: 2px solid #ddd;
@@ -111,6 +111,52 @@
         .image-preview img {
             max-width: 100%;
             border-radius: 8px;
+        }
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .popup-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border: none;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            position: relative;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+        }
+        .close:hover {
+            color: black;
+        }
+        .info-display {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+        }
+        .info-display label {
+            margin-top: 10px;
+        }
+        .info-display input, .info-display select, .info-display textarea {
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -183,8 +229,10 @@
             </div>
             
             <div class="input-group">
-                <button class="btn" onclick="editIngredients()">編輯材料</button>
-                <button class="btn" onclick="editRecipes()">編輯食譜</button>
+                <button class="btn" onclick="openEditIngredientsPopup()">編輯材料</button>
+                <button class="btn" onclick="openCreateIngredientPopup()">新增材料</button>
+                <button class="btn" onclick="openEditRecipesPopup()">編輯食譜</button>
+                <button class="btn" onclick="openCreateRecipePopup()">新增食譜</button>
                 <button class="btn" onclick="loadLatestRecipes()">載入最新食譜</button>
             </div>
             
@@ -194,6 +242,172 @@
         <div class="recipe-display" id="recipeDisplay">
             <div class="recipe-title" id="recipeTitle"></div>
             <div class="recipe-steps" id="recipeSteps"></div>
+        </div>
+    </div>
+
+    <!-- Edit Ingredients Popup -->
+    <div id="editIngredientsPopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeEditIngredientsPopup()">&times;</span>
+            <h2>編輯材料</h2>
+            <select id="ingredientSelect" onchange="displayIngredientInfo()">
+                <option value="">選擇材料...</option>
+            </select>
+            <div id="ingredientInfo" class="info-display" style="display: none;">
+                <label for="ingredientName">材料名稱:</label>
+                <input type="text" id="ingredientName" />
+                <label for="ingredientType">類型:</label>
+                <select id="ingredientType">
+                    <option value="肉類">肉類</option>
+                    <option value="蔬菜">蔬菜</option>
+                    <option value="海鮮">海鮮</option>
+                    <option value="蛋">蛋</option>
+                    <option value="豆類">豆類</option>
+                    <option value="其他">其他</option>
+                </select>
+                <label for="ingredientSeason">適合季節:</label>
+                <select id="ingredientSeason">
+                    <option value="四季">四季</option>
+                    <option value="春">春</option>
+                    <option value="夏">夏</option>
+                    <option value="秋">秋</option>
+                    <option value="冬">冬</option>
+                </select>
+                <label for="ingredientCookingMethods">烹調方法:</label>
+                <select id="ingredientCookingMethods" multiple>
+                    <option value="蒸">蒸</option>
+                    <option value="炒">炒</option>
+                    <option value="煮">煮</option>
+                    <option value="炸">炸</option>
+                    <option value="湯">湯</option>
+                    <option value="麵">麵</option>
+                </select>
+                <button class="btn" onclick="updateIngredient()">更新材料</button>
+                <button class="btn" onclick="deleteIngredient()">刪除材料</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Ingredient Popup -->
+    <div id="createIngredientPopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeCreateIngredientPopup()">&times;</span>
+            <h2>新增材料</h2>
+            <label for="newIngredientName">材料名稱:</label>
+            <input type="text" id="newIngredientName" />
+            <label for="newIngredientType">類型:</label>
+            <select id="newIngredientType">
+                <option value="肉類">肉類</option>
+                <option value="蔬菜">蔬菜</option>
+                <option value="海鮮">海鮮</option>
+                <option value="蛋">蛋</option>
+                <option value="豆類">豆類</option>
+                <option value="其他">其他</option>
+            </select>
+            <label for="newIngredientSeason">適合季節:</label>
+            <select id="newIngredientSeason">
+                <option value="四季">四季</option>
+                <option value="春">春</option>
+                <option value="夏">夏</option>
+                <option value="秋">秋</option>
+                <option value="冬">冬</option>
+            </select>
+            <label for="newIngredientCookingMethods">烹調方法:</label>
+            <select id="newIngredientCookingMethods" multiple>
+                <option value="蒸">蒸</option>
+                <option value="炒">炒</option>
+                <option value="煮">煮</option>
+                <option value="炸">炸</option>
+                <option value="湯">湯</option>
+                <option value="麵">麵</option>
+            </select>
+            <button class="btn" onclick="createIngredient()">新增材料</button>
+        </div>
+    </div>
+
+    <!-- Edit Recipes Popup -->
+    <div id="editRecipesPopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeEditRecipesPopup()">&times;</span>
+            <h2>編輯食譜</h2>
+            <select id="recipeSelect" onchange="displayRecipeInfo()">
+                <option value="">選擇食譜...</option>
+            </select>
+            <div id="recipeInfo" class="info-display" style="display: none;">
+                <label for="recipeName">食譜名稱:</label>
+                <input type="text" id="recipeName" />
+                <label for="recipeCategory">類別:</label>
+                <select id="recipeCategory">
+                    <option value="主菜">主菜</option>
+                    <option value="湯水">湯水</option>
+                    <option value="甜品">甜品</option>
+                    <option value="健康餐">健康餐</option>
+                    <option value="重口味">重口味</option>
+                </select>
+                <label for="recipeCuisine">菜系:</label>
+                <select id="recipeCuisine">
+                    <option value="中式">中式</option>
+                    <option value="西式">西式</option>
+                    <option value="日式">日式</option>
+                    <option value="韓式">韓式</option>
+                    <option value="泰式">泰式</option>
+                    <option value="台式">台式</option>
+                </select>
+                <label for="recipeSeason">適合季節:</label>
+                <select id="recipeSeason">
+                    <option value="四季">四季</option>
+                    <option value="春">春</option>
+                    <option value="夏">夏</option>
+                    <option value="秋">秋</option>
+                    <option value="冬">冬</option>
+                </select>
+                <label for="recipeIngredients">材料 (每行一個):</label>
+                <textarea id="recipeIngredients" rows="4"></textarea>
+                <label for="recipeMethod">烹調步驟 (每行一個步驟):</label>
+                <textarea id="recipeMethod" rows="6"></textarea>
+                <button class="btn" onclick="updateRecipe()">更新食譜</button>
+                <button class="btn" onclick="deleteRecipe()">刪除食譜</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Recipe Popup -->
+    <div id="createRecipePopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closeCreateRecipePopup()">&times;</span>
+            <h2>新增食譜</h2>
+            <label for="newRecipeName">食譜名稱:</label>
+            <input type="text" id="newRecipeName" />
+            <label for="newRecipeCategory">類別:</label>
+            <select id="newRecipeCategory">
+                <option value="主菜">主菜</option>
+                <option value="湯水">湯水</option>
+                <option value="甜品">甜品</option>
+                <option value="健康餐">健康餐</option>
+                <option value="重口味">重口味</option>
+            </select>
+            <label for="newRecipeCuisine">菜系:</label>
+            <select id="newRecipeCuisine">
+                <option value="中式">中式</option>
+                <option value="西式">西式</option>
+                <option value="日式">日式</option>
+                <option value="韓式">韓式</option>
+                <option value="泰式">泰式</option>
+                <option value="台式">台式</option>
+            </select>
+            <label for="newRecipeSeason">適合季節:</label>
+            <select id="newRecipeSeason">
+                <option value="四季">四季</option>
+                <option value="春">春</option>
+                <option value="夏">夏</option>
+                <option value="秋">秋</option>
+                <option value="冬">冬</option>
+            </select>
+            <label for="newRecipeIngredients">材料 (每行一個):</label>
+            <textarea id="newRecipeIngredients" rows="4"></textarea>
+            <label for="newRecipeMethod">烹調步驟 (每行一個步驟):</label>
+            <textarea id="newRecipeMethod" rows="6"></textarea>
+            <button class="btn" onclick="createRecipe()">新增食譜</button>
         </div>
     </div>
 
@@ -240,109 +454,472 @@
             }
         }
 
-        // 模擬從icook抓取的食譜數據
-        const icookRecipes = [
-            {
-                id: 1,
-                name: "清爽夏日涼拌絲瓜",
-                category: "主菜",
-                ingredients: ["絲瓜", "蒜", "醬油", "醋"],
-                method: "1. 絲瓜去皮切片，焯水後過冷水備用\n2. 蒜切末，加入醬油、醋調成醬汁\n3. 將絲瓜與醬汁拌勻即可",
-                cuisine: "中式",
-                season: "夏季"
-            },
-            {
-                id: 2,
-                name: "滋補冬日羊肉爐",
-                category: "主菜",
-                ingredients: ["羊肉", "白蘿蔔", "薑", "枸杞"],
-                method: "1. 羊肉切塊焯水去腥\n2. 白蘿蔔去皮切塊\n3. 將所有材料放入鍋中燉煮\n4. 燉至羊肉軟爛即可",
-                cuisine: "中式",
-                season: "冬季"
-            },
-            {
-                id: 3,
-                name: "秋季養生蓮藕排骨湯",
-                category: "湯水",
-                ingredients: ["排骨", "蓮藕", "薑", "鹽"],
-                method: "1. 排骨焯水去血沫\n2. 蓮藕去皮切塊\n3. 所有材料放入鍋中，加水煮沸\n4. 轉小火慢燉2小時",
-                cuisine: "中式",
-                season: "秋季"
-            },
-            {
-                id: 4,
-                name: "甜蜜桂花糯米丸子",
-                category: "甜品",
-                ingredients: ["糯米粉", "桂花", "糖", "水"],
-                method: "1. 糯米粉加水揉成光滑面團\n2. 分成小份搓成圓球\n3. 水開後放入糯米球煮熟\n4. 撒上桂花和糖即可",
-                cuisine: "中式",
-                season: "四季"
-            },
-            {
-                id: 5,
-                name: "清爽青木瓜沙拉",
-                category: "健康餐",
-                ingredients: ["青木瓜", "番茄", "花生", "魚露"],
-                method: "1. 青木瓜刨絲，番茄切片\n2. 花生烘烤碾碎\n3. 所有材料混合，加入調料拌勻\n4. 裝盤即可",
-                cuisine: "泰式",
-                season: "四季"
-            },
-            {
-                id: 6,
-                name: "麻辣香鍋",
-                category: "重口味",
-                ingredients: ["各種蔬菜", "肉類", "火鍋料", "花椒"],
-                method: "1. 各種食材處理好備用\n2. 熱油爆香花椒、辣椒\n3. 加入各種食材翻炒\n4. 加入調料炒熟即可",
-                cuisine: "中式",
-                season: "四季"
-            }
-        ];
+        // Global variable to store ingredients and recipes data
+        let ingredientsData = [];
+        let recipesData = [];
 
-        function loadLatestRecipes() {
-            alert("已載入最新食譜數據！現在您可以選擇更多時令食譜。");
-        }
-
-        function generateRecipe() {
-            const ingredients = Array.from(document.getElementById('ingredient').selectedOptions).map(option => option.value);
-            const cuisine = document.getElementById('cuisine').value;
-            const season = document.getElementById('season').value;
-            const category = document.getElementById('category').value;
-            
-            // 根據條件篩選食譜
-            let filteredRecipes = icookRecipes.filter(recipe => 
-                (cuisine === recipe.cuisine || cuisine === '中式') &&
-                (season === recipe.season || recipe.season === '四季') &&
-                (category === recipe.category)
-            );
-            
-            // 如果篩選後沒有食譜，則使用默認食譜
-            if (filteredRecipes.length === 0) {
-                filteredRecipes = [
+        // Initialize data from JSON file
+        async function initializeData() {
+            try {
+                const response = await fetch('/data.json');
+                const data = await response.json();
+                
+                ingredientsData = data.ingredients || [];
+                recipesData = data.recipes || [];
+                
+                // Populate ingredients dropdown
+                populateIngredientsDropdown();
+                
+                // Populate recipes dropdown
+                populateRecipesDropdown();
+                
+                console.log("Data loaded successfully");
+            } catch (error) {
+                console.error("Error loading data:", error);
+                
+                // Fallback to default data if JSON loading fails
+                ingredientsData = [
+                    { id: 1, name: "雞胸肉", type: "肉類", season: "四季", cookingMethods: ["炒", "煮", "蒸", "炸"] },
+                    { id: 2, name: "豬肉", type: "肉類", season: "四季", cookingMethods: ["炒", "煮", "蒸", "炸"] },
+                    { id: 3, name: "牛肉", type: "肉類", season: "四季", cookingMethods: ["炒", "煮", "蒸", "炸"] },
+                    { id: 4, name: "魚", type: "海鮮", season: "四季", cookingMethods: ["蒸", "煮", "炸"] },
+                    { id: 5, name: "蝦", type: "海鮮", season: "四季", cookingMethods: ["蒸", "煮", "炸", "炒"] },
+                    { id: 6, name: "雞蛋", type: "蛋", season: "四季", cookingMethods: ["炒", "煮", "蒸", "炸"] },
+                    { id: 7, name: "青菜", type: "蔬菜", season: "四季", cookingMethods: ["炒", "煮", "蒸"] },
+                    { id: 8, name: "菇類", type: "蔬菜", season: "四季", cookingMethods: ["炒", "煮", "蒸"] },
+                    { id: 9, name: "豆腐", type: "豆類", season: "四季", cookingMethods: ["炒", "煮", "蒸"] },
+                    { id: 10, name: "米飯", type: "其他", season: "四季", cookingMethods: ["炒", "煮"] },
+                    { id: 11, name: "麵條", type: "其他", season: "四季", cookingMethods: ["煮", "炒"] },
+                    { id: 12, name: "粉絲", type: "其他", season: "四季", cookingMethods: ["湯", "煮"] }
+                ];
+                
+                recipesData = [
                     {
-                        name: `${season}${category} - ${ingredients[0]}料理`,
-                        method: `1. 將${ingredients[0]}處理好備用\n2. 準備其他配料\n3. 按照${category}的做法進行烹調\n4. 調味後完成`
+                        id: 1,
+                        name: "清爽夏日涼拌絲瓜",
+                        category: "主菜",
+                        ingredients: ["絲瓜", "蒜", "醬油", "醋"],
+                        method: "1. 絲瓜去皮切片，焯水後過冷水備用\n2. 蒜切末，加入醬油、醋調成醬汁\n3. 將絲瓜與醬汁拌勻即可",
+                        cuisine: "中式",
+                        season: "夏季"
+                    },
+                    {
+                        id: 2,
+                        name: "滋補冬日羊肉爐",
+                        category: "主菜",
+                        ingredients: ["羊肉", "白蘿蔔", "薑", "枸杞"],
+                        method: "1. 羊肉切塊焯水去腥\n2. 白蘿蔔去皮切塊\n3. 將所有材料放入鍋中燉煮\n4. 燉至羊肉軟爛即可",
+                        cuisine: "中式",
+                        season: "冬季"
+                    },
+                    {
+                        id: 3,
+                        name: "秋季養生蓮藕排骨湯",
+                        category: "湯水",
+                        ingredients: ["排骨", "蓮藕", "薑", "鹽"],
+                        method: "1. 排骨焯水去血沫\n2. 蓮藕去皮切塊\n3. 所有材料放入鍋中，加水煮沸\n4. 轉小火慢燉2小時",
+                        cuisine: "中式",
+                        season: "秋季"
+                    },
+                    {
+                        id: 4,
+                        name: "甜蜜桂花糯米丸子",
+                        category: "甜品",
+                        ingredients: ["糯米粉", "桂花", "糖", "水"],
+                        method: "1. 糯米粉加水揉成光滑面團\n2. 分成小份搓成圓球\n3. 水開後放入糯米球煮熟\n4. 撒上桂花和糖即可",
+                        cuisine: "中式",
+                        season: "四季"
+                    },
+                    {
+                        id: 5,
+                        name: "清爽青木瓜沙拉",
+                        category: "健康餐",
+                        ingredients: ["青木瓜", "番茄", "花生", "魚露"],
+                        method: "1. 青木瓜刨絲，番茄切片\n2. 花生烘烤碾碎\n3. 所有材料混合，加入調料拌勻\n4. 裝盤即可",
+                        cuisine: "泰式",
+                        season: "四季"
+                    },
+                    {
+                        id: 6,
+                        name: "麻辣香鍋",
+                        category: "重口味",
+                        ingredients: ["各種蔬菜", "肉類", "火鍋料", "花椒"],
+                        method: "1. 各種食材處理好備用\n2. 熱油爆香花椒、辣椒\n3. 加入各種食材翻炒\n4. 加入調料炒熟即可",
+                        cuisine: "中式",
+                        season: "四季"
                     }
                 ];
+                
+                // Populate ingredients dropdown
+                populateIngredientsDropdown();
+                
+                // Populate recipes dropdown
+                populateRecipesDropdown();
             }
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', initializeData);
+
+        // Function to populate ingredients dropdown
+        function populateIngredientsDropdown() {
+            const ingredientSelect = document.getElementById('ingredientSelect');
+            ingredientSelect.innerHTML = '<option value="">選擇材料...</option>';
             
-            const recipeDisplay = document.getElementById('recipeDisplay');
-            const recipeTitle = document.getElementById('recipeTitle');
-            const recipeSteps = document.getElementById('recipeSteps');
+            ingredientsData.forEach(ingredient => {
+                const option = document.createElement('option');
+                option.value = ingredient.id;
+                option.textContent = ingredient.name;
+                ingredientSelect.appendChild(option);
+            });
+        }
+
+        // Function to populate recipes dropdown
+        function populateRecipesDropdown() {
+            const recipeSelect = document.getElementById('recipeSelect');
+            recipeSelect.innerHTML = '<option value="">選擇食譜...</option>';
             
-            if (ingredients.length === 0) {
-                alert('請選擇至少一種材料');
+            recipesData.forEach(recipe => {
+                const option = document.createElement('option');
+                option.value = recipe.id;
+                option.textContent = recipe.name;
+                recipeSelect.appendChild(option);
+            });
+        }
+
+        // Open edit ingredients popup
+        function openEditIngredientsPopup() {
+            document.getElementById('editIngredientsPopup').style.display = 'block';
+        }
+
+        // Close edit ingredients popup
+        function closeEditIngredientsPopup() {
+            document.getElementById('editIngredientsPopup').style.display = 'none';
+            resetIngredientForm();
+        }
+
+        // Display ingredient information
+        function displayIngredientInfo() {
+            const selectElement = document.getElementById('ingredientSelect');
+            const selectedId = selectElement.value;
+            
+            if (!selectedId) {
+                document.getElementById('ingredientInfo').style.display = 'none';
                 return;
             }
             
-            const selectedRecipe = filteredRecipes[Math.floor(Math.random() * filteredRecipes.length)];
+            const ingredient = ingredientsData.find(ing => ing.id == selectedId);
             
-            recipeTitle.textContent = selectedRecipe.name;
-            recipeSteps.innerHTML = `<ol><li>${selectedRecipe.method.replace(/\n/g, '</li><li>')}</li></ol>`;
-            
-            recipeDisplay.style.display = 'block';
+            if (ingredient) {
+                document.getElementById('ingredientName').value = ingredient.name;
+                document.getElementById('ingredientType').value = ingredient.type;
+                document.getElementById('ingredientSeason').value = ingredient.season;
+                
+                // Set cooking methods (multi-select)
+                const cookingMethodsSelect = document.getElementById('ingredientCookingMethods');
+                for (let i = 0; i < cookingMethodsSelect.options.length; i++) {
+                    cookingMethodsSelect.options[i].selected = ingredient.cookingMethods.includes(cookingMethodsSelect.options[i].value);
+                }
+                
+                document.getElementById('ingredientInfo').style.display = 'block';
+            }
         }
 
-        // 編輯材料功能
+        // Update ingredient
+        function updateIngredient() {
+            const selectElement = document.getElementById('ingredientSelect');
+            const selectedId = selectElement.value;
+            
+            if (!selectedId) {
+                alert('請先選擇一個材料');
+                return;
+            }
+            
+            const updatedIngredient = {
+                id: parseInt(selectedId),
+                name: document.getElementById('ingredientName').value,
+                type: document.getElementById('ingredientType').value,
+                season: document.getElementById('ingredientSeason').value,
+                cookingMethods: Array.from(document.getElementById('ingredientCookingMethods').selectedOptions).map(option => option.value)
+            };
+            
+            // Find index and update
+            const index = ingredientsData.findIndex(ing => ing.id == selectedId);
+            if (index !== -1) {
+                ingredientsData[index] = updatedIngredient;
+                saveDataToServer();
+                alert('材料已更新！');
+                populateIngredientsDropdown(); // Refresh dropdown
+                resetIngredientForm();
+            }
+        }
+
+        // Delete ingredient
+        function deleteIngredient() {
+            const selectElement = document.getElementById('ingredientSelect');
+            const selectedId = selectElement.value;
+            
+            if (!selectedId) {
+                alert('請先選擇一個材料');
+                return;
+            }
+            
+            if (confirm('確定要刪除此材料嗎？')) {
+                ingredientsData = ingredientsData.filter(ing => ing.id != selectedId);
+                saveDataToServer();
+                alert('材料已刪除！');
+                populateIngredientsDropdown(); // Refresh dropdown
+                resetIngredientForm();
+            }
+        }
+
+        // Reset ingredient form
+        function resetIngredientForm() {
+            document.getElementById('ingredientSelect').value = '';
+            document.getElementById('ingredientInfo').style.display = 'none';
+        }
+
+        // Open create ingredient popup
+        function openCreateIngredientPopup() {
+            document.getElementById('createIngredientPopup').style.display = 'block';
+        }
+
+        // Close create ingredient popup
+        function closeCreateIngredientPopup() {
+            document.getElementById('createIngredientPopup').style.display = 'none';
+            document.getElementById('newIngredientName').value = '';
+            document.getElementById('newIngredientType').value = '肉類';
+            document.getElementById('newIngredientSeason').value = '四季';
+            const cookingMethodsSelect = document.getElementById('newIngredientCookingMethods');
+            for (let i = 0; i < cookingMethodsSelect.options.length; i++) {
+                cookingMethodsSelect.options[i].selected = false;
+            }
+        }
+
+        // Create new ingredient
+        function createIngredient() {
+            const name = document.getElementById('newIngredientName').value.trim();
+            
+            if (!name) {
+                alert('請輸入材料名稱');
+                return;
+            }
+            
+            const newIngredient = {
+                id: Date.now(), // Unique ID
+                name: name,
+                type: document.getElementById('newIngredientType').value,
+                season: document.getElementById('newIngredientSeason').value,
+                cookingMethods: Array.from(document.getElementById('newIngredientCookingMethods').selectedOptions).map(option => option.value)
+            };
+            
+            ingredientsData.push(newIngredient);
+            saveDataToServer();
+            alert('材料已新增！');
+            populateIngredientsDropdown(); // Refresh dropdown
+            closeCreateIngredientPopup();
+        }
+
+        // Open edit recipes popup
+        function openEditRecipesPopup() {
+            document.getElementById('editRecipesPopup').style.display = 'block';
+        }
+
+        // Close edit recipes popup
+        function closeEditRecipesPopup() {
+            document.getElementById('editRecipesPopup').style.display = 'none';
+            resetRecipeForm();
+        }
+
+        // Display recipe information
+        function displayRecipeInfo() {
+            const selectElement = document.getElementById('recipeSelect');
+            const selectedId = selectElement.value;
+            
+            if (!selectedId) {
+                document.getElementById('recipeInfo').style.display = 'none';
+                return;
+            }
+            
+            const recipe = recipesData.find(rec => rec.id == selectedId);
+            
+            if (recipe) {
+                document.getElementById('recipeName').value = recipe.name;
+                document.getElementById('recipeCategory').value = recipe.category;
+                document.getElementById('recipeCuisine').value = recipe.cuisine;
+                document.getElementById('recipeSeason').value = recipe.season;
+                document.getElementById('recipeIngredients').value = recipe.ingredients.join('\n');
+                document.getElementById('recipeMethod').value = recipe.method;
+                
+                document.getElementById('recipeInfo').style.display = 'block';
+            }
+        }
+
+        // Update recipe
+        function updateRecipe() {
+            const selectElement = document.getElementById('recipeSelect');
+            const selectedId = selectElement.value;
+            
+            if (!selectedId) {
+                alert('請先選擇一個食譜');
+                return;
+            }
+            
+            const updatedRecipe = {
+                id: parseInt(selectedId),
+                name: document.getElementById('recipeName').value,
+                category: document.getElementById('recipeCategory').value,
+                cuisine: document.getElementById('recipeCuisine').value,
+                season: document.getElementById('recipeSeason').value,
+                ingredients: document.getElementById('recipeIngredients').value.split('\n').filter(line => line.trim() !== ''),
+                method: document.getElementById('recipeMethod').value
+            };
+            
+            // Find index and update
+            const index = recipesData.findIndex(rec => rec.id == selectedId);
+            if (index !== -1) {
+                recipesData[index] = updatedRecipe;
+                saveDataToServer();
+                alert('食譜已更新！');
+                populateRecipesDropdown(); // Refresh dropdown
+                resetRecipeForm();
+            }
+        }
+
+        // Delete recipe
+        function deleteRecipe() {
+            const selectElement = document.getElementById('recipeSelect');
+            const selectedId = selectElement.value;
+            
+            if (!selectedId) {
+                alert('請先選擇一個食譜');
+                return;
+            }
+            
+            if (confirm('確定要刪除此食譜嗎？')) {
+                recipesData = recipesData.filter(rec => rec.id != selectedId);
+                saveDataToServer();
+                alert('食譜已刪除！');
+                populateRecipesDropdown(); // Refresh dropdown
+                resetRecipeForm();
+            }
+        }
+
+        // Reset recipe form
+        function resetRecipeForm() {
+            document.getElementById('recipeSelect').value = '';
+            document.getElementById('recipeInfo').style.display = 'none';
+        }
+
+        // Open create recipe popup
+        function openCreateRecipePopup() {
+            document.getElementById('createRecipePopup').style.display = 'block';
+        }
+
+        // Close create recipe popup
+        function closeCreateRecipePopup() {
+            document.getElementById('createRecipePopup').style.display = 'none';
+            document.getElementById('newRecipeName').value = '';
+            document.getElementById('newRecipeCategory').value = '主菜';
+            document.getElementById('newRecipeCuisine').value = '中式';
+            document.getElementById('newRecipeSeason').value = '四季';
+            document.getElementById('newRecipeIngredients').value = '';
+            document.getElementById('newRecipeMethod').value = '';
+        }
+
+        // Create new recipe
+        function createRecipe() {
+            const name = document.getElementById('newRecipeName').value.trim();
+            
+            if (!name) {
+                alert('請輸入食譜名稱');
+                return;
+            }
+            
+            const newRecipe = {
+                id: Date.now(), // Unique ID
+                name: name,
+                category: document.getElementById('newRecipeCategory').value,
+                cuisine: document.getElementById('newRecipeCuisine').value,
+                season: document.getElementById('newRecipeSeason').value,
+                ingredients: document.getElementById('newRecipeIngredients').value.split('\n').filter(line => line.trim() !== ''),
+                method: document.getElementById('newRecipeMethod').value
+            };
+            
+            recipesData.push(newRecipe);
+            saveDataToServer();
+            alert('食譜已新增！');
+            populateRecipesDropdown(); // Refresh dropdown
+            closeCreateRecipePopup();
+        }
+
+        // Save data to server (this will be implemented later)
+        function saveDataToServer() {
+            // Prepare data to send
+            const dataToSend = {
+                ingredients: ingredientsData,
+                recipes: recipesData
+            };
+            
+            // In a real implementation, we would send this to the backend
+            // For now, we'll just update the local storage and the original select element
+            localStorage.setItem('appData', JSON.stringify(dataToSend));
+            
+            // Update the main ingredient selection dropdown
+            const mainIngredientSelect = document.getElementById('ingredient');
+            mainIngredientSelect.innerHTML = ''; // Clear existing options
+            
+            ingredientsData.forEach(ingredient => {
+                const option = document.createElement('option');
+                option.value = ingredient.name;
+                option.textContent = ingredient.name;
+                mainIngredientSelect.appendChild(option);
+            });
+            
+            console.log("Data saved to local storage and UI updated");
+        }
+
+        // Load latest recipes function (fixed implementation)
+        function loadLatestRecipes() {
+            // In a real implementation, this would fetch from the server
+            // For now, we'll just reload from our stored data
+            try {
+                const storedData = localStorage.getItem('appData');
+                if (storedData) {
+                    const data = JSON.parse(storedData);
+                    
+                    if (data.ingredients && data.recipes) {
+                        ingredientsData = data.ingredients;
+                        recipesData = data.recipes;
+                        
+                        populateIngredientsDropdown();
+                        populateRecipesDropdown();
+                        
+                        // Update the main ingredient selection dropdown
+                        const mainIngredientSelect = document.getElementById('ingredient');
+                        mainIngredientSelect.innerHTML = ''; // Clear existing options
+                        
+                        ingredientsData.forEach(ingredient => {
+                            const option = document.createElement('option');
+                            option.value = ingredient.name;
+                            option.textContent = ingredient.name;
+                            mainIngredientSelect.appendChild(option);
+                        });
+                        
+                        alert("已載入最新食譜及材料數據！");
+                    } else {
+                        alert("沒有找到存儲的數據，使用默認數據。");
+                    }
+                } else {
+                    alert("沒有找到存儲的數據，使用默認數據。");
+                }
+            } catch (error) {
+                console.error("Error loading data:", error);
+                alert("載入數據時發生錯誤，使用默認數據。");
+            }
+        }
+
+        // 編輯材料功能 (舊版本，保留為備用)
         function editIngredients() {
             const currentIngredients = Array.from(document.getElementById('ingredient').options).map(option => option.text);
             const newIngredient = prompt('請輸入新的材料名稱:', '');
@@ -364,7 +941,7 @@
             }
         }
 
-        // 編輯食譜功能
+        // 編輯食譜功能 (舊版本，保留為備用)
         function editRecipes() {
             const cuisine = document.getElementById('cuisine').value;
             const category = document.getElementById('category').value;
@@ -389,6 +966,48 @@
                     });
                 }
             }
+        }
+
+        // Generate recipe function (updated to work with our new data structure)
+        function generateRecipe() {
+            const ingredients = Array.from(document.getElementById('ingredient').selectedOptions).map(option => option.value);
+            const cuisine = document.getElementById('cuisine').value;
+            const season = document.getElementById('season').value;
+            const category = document.getElementById('category').value;
+            
+            // 根據條件篩選食譜
+            let filteredRecipes = recipesData.filter(recipe => 
+                (cuisine === recipe.cuisine || cuisine === '中式') &&
+                (season === recipe.season || recipe.season === '四季') &&
+                (category === recipe.category)
+            );
+            
+            // 如果篩選後沒有食譜，則使用默認食譜
+            if (filteredRecipes.length === 0) {
+                filteredRecipes = [
+                    {
+                        name: `${season}${category} - ${ingredients[0]}料理`,
+                        method: `1. 將${ingredients[0]}處理好備用\n2. 準備其他配料\n3. 按照${category}的做法進行烹調\n4. 調味後完成`,
+                        ingredients: ingredients
+                    }
+                ];
+            }
+            
+            const recipeDisplay = document.getElementById('recipeDisplay');
+            const recipeTitle = document.getElementById('recipeTitle');
+            const recipeSteps = document.getElementById('recipeSteps');
+            
+            if (ingredients.length === 0) {
+                alert('請選擇至少一種材料');
+                return;
+            }
+            
+            const selectedRecipe = filteredRecipes[Math.floor(Math.random() * filteredRecipes.length)];
+            
+            recipeTitle.textContent = selectedRecipe.name;
+            recipeSteps.innerHTML = `<ol><li>${selectedRecipe.method.replace(/\n/g, '</li><li>')}</li></ol>`;
+            
+            recipeDisplay.style.display = 'block';
         }
     </script>
 </body>
