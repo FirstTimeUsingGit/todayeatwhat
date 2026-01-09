@@ -41,9 +41,6 @@
         .main-content {
             padding: 30px;
         }
-        .input-section {
-            margin-bottom: 30px;
-        }
         .input-group {
             margin-bottom: 20px;
         }
@@ -70,6 +67,7 @@
             cursor: pointer;
             width: 100%;
             transition: transform 0.2s;
+            margin-bottom: 10px;
         }
         .btn:hover {
             transform: translateY(-2px);
@@ -106,51 +104,95 @@
         </header>
         
         <div class="main-content">
-            <div class="input-section">
-                <div class="input-group">
-                    <label for="ingredient">選擇現有材料：</label>
-                    <select id="ingredient" multiple size="5">
-                        <option value="雞">雞胸肉</option>
-                        <option value="豬">豬肉</option>
-                        <option value="牛">牛肉</option>
-                        <option value="魚">魚</option>
-                        <option value="蝦">蝦</option>
-                        <option value="蛋">雞蛋</option>
-                        <option value="菜">青菜</option>
-                        <option value="菇">菇類</option>
-                        <option value="豆腐">豆腐</option>
-                        <option value="米">米飯</option>
-                        <option value="麵">麵條</option>
-                        <option value="粉絲">粉絲</option>
-                    </select>
-                </div>
-                
-                <div class="input-group">
-                    <label for="cuisine">選擇菜系：</label>
-                    <select id="cuisine">
-                        <option value="中式">中式</option>
-                        <option value="西式">西式</option>
-                        <option value="日式">日式</option>
-                        <option value="韓式">韓式</option>
-                        <option value="泰式">泰式</option>
-                        <option value="台式">台式</option>
-                    </select>
-                </div>
-                
-                <button class="btn" onclick="generateRecipe()">生成食譜</button>
+            <div class="input-group">
+                <label for="season">選擇季節：</label>
+                <select id="season">
+                    <option value="春季">春季</option>
+                    <option value="夏季">夏季</option>
+                    <option value="秋季">秋季</option>
+                    <option value="冬季">冬季</option>
+                </select>
             </div>
             
-            <div class="recipe-display" id="recipeDisplay">
-                <div class="recipe-title" id="recipeTitle"></div>
-                <div class="recipe-steps" id="recipeSteps"></div>
+            <div class="input-group">
+                <label for="ingredient">選擇現有材料：</label>
+                <select id="ingredient" multiple size="5">
+                    <option value="雞">雞胸肉</option>
+                    <option value="豬">豬肉</option>
+                    <option value="牛">牛肉</option>
+                    <option value="魚">魚</option>
+                    <option value="蝦">蝦</option>
+                    <option value="蛋">雞蛋</option>
+                    <option value="菜">青菜</option>
+                    <option value="菇">菇類</option>
+                    <option value="豆腐">豆腐</option>
+                    <option value="米">米飯</option>
+                    <option value="麵">麵條</option>
+                    <option value="粉絲">粉絲</option>
+                </select>
             </div>
+            
+            <div class="input-group">
+                <label for="cuisine">選擇菜系：</label>
+                <select id="cuisine">
+                    <option value="中式">中式</option>
+                    <option value="西式">西式</option>
+                    <option value="日式">日式</option>
+                    <option value="韓式">韓式</option>
+                    <option value="泰式">泰式</option>
+                    <option value="台式">台式</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <button class="btn" onclick="editIngredients()">編輯材料</button>
+                <button class="btn" onclick="editRecipes()">編輯食譜</button>
+            </div>
+            
+            <button class="btn" onclick="generateRecipe()">生成食譜</button>
+        </div>
+        
+        <div class="recipe-display" id="recipeDisplay">
+            <div class="recipe-title" id="recipeTitle"></div>
+            <div class="recipe-steps" id="recipeSteps"></div>
         </div>
     </div>
 
     <script>
+        // 季節性材料推薦
+        const seasonalIngredients = {
+            '春季': ['筍', '韭菜', '菠菜', '豌豆苗', '小蔥', '香椿'],
+            '夏季': ['冬瓜', '苦瓜', '絲瓜', '茄子', '空心菜', '豆角'],
+            '秋季': ['南瓜', '蓮藕', '栗子', '白蘿蔔', '白菜', '柿子'],
+            '冬季': ['白菜', '蘿蔔', '羊肉', '黑木耳', '銀耳', '桂圓']
+        };
+
+        // 更新材料選項根據季節
+        document.getElementById('season').addEventListener('change', function() {
+            const season = this.value;
+            const ingredientSelect = document.getElementById('ingredient');
+            const seasonalItems = seasonalIngredients[season] || [];
+            
+            // 清空現有選項（除了原有的）
+            Array.from(ingredientSelect.options).forEach(option => {
+                if (!['雞', '豬', '牛', '魚', '蝦', '蛋', '菜', '菇', '豆腐', '米', '麵', '粉絲'].includes(option.value)) {
+                    option.remove();
+                }
+            });
+            
+            // 添加季節性材料
+            seasonalItems.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                ingredientSelect.appendChild(option);
+            });
+        });
+
         function generateRecipe() {
             const ingredients = Array.from(document.getElementById('ingredient').selectedOptions).map(option => option.value);
             const cuisine = document.getElementById('cuisine').value;
+            const season = document.getElementById('season').value;
             
             // 模擬生成食譜的邏輯
             const recipes = {
@@ -166,7 +208,16 @@
                     '豆腐': '麻婆豆腐 - 1. 豆腐切塊焯水 2. 爆香肉末 3. 加入豆腐 4. 調味收汁',
                     '米': '蛋炒飯 - 1. 隔夜飯打散 2. 雞蛋炒熟 3. 加入米飯炒勻 4. 調味完成',
                     '麵': '炸醬麵 - 1. 麵條煮熟 2. 炸醬爆香 3. 拌入麵條 4. 配菜完成',
-                    '粉絲': '三絲炒粉絲 - 1. 粉絲泡軟 2. 三絲爆炒 3. 加入粉絲 4. 調味完成'
+                    '粉絲': '三絲炒粉絲 - 1. 粉絲泡軟 2. 三絲爆炒 3. 加入粉絲 4. 調味完成',
+                    '筍': '筍絲炒肉 - 1. 筍絲切好備用 2. 肉絲爆炒 3. 加入筍絲炒熟 4. 調味完成',
+                    '韭菜': '韭菜炒蛋 - 1. 韭菜切段 2. 雞蛋炒熟 3. 加入韭菜炒勻 4. 調味完成',
+                    '菠菜': '蒜蓉菠菜 - 1. 菠菜洗淨 2. 熱油爆蒜 3. 快炒菠菜 4. 調味完成',
+                    '冬瓜': '冬瓜湯 - 1. 冬瓜去皮切塊 2. 加水煮滾 3. 燉煮至軟 4. 調味完成',
+                    '苦瓜': '苦瓜炒蛋 - 1. 苦瓜去籽切片 2. 雞蛋炒熟 3. 加入苦瓜炒熟 4. 調味完成',
+                    '南瓜': '南瓜粥 - 1. 南瓜切塊 2. 與米一起煮 3. 燉煮至爛 4. 調味完成',
+                    '蓮藕': '蓮藕排骨湯 - 1. 排骨焯水 2. 蓮藕切塊 3. 一起燉煮 4. 調味完成',
+                    '羊肉': '羊肉爐 - 1. 羊肉切片 2. 準備火鍋料 3. 燉煮羊肉 4. 配蘸料食用',
+                    '白蘿蔔': '蘿蔔糕 - 1. 蘿蔔刨絲 2. 混合米漿 3. 蒸熟成型 4. 煎至金黃'
                 },
                 '西式': {
                     '雞': '香草烤雞 - 1. 雞肉醃製 2. 烤箱200度烤30分鐘 3. 配蔬菜 4. 淋上醬汁',
@@ -180,7 +231,11 @@
                     '豆腐': '豆腐排 - 1. 豆腐成型 2. 醃製調味 3. 煎至金黃 4. 配醬汁',
                     '米': '西班牙海鮮飯 - 1. 米飯炒香 2. 加高湯 3. 加入海鮮 4. 煮熟完成',
                     '麵': '意大利肉醬麵 - 1. 肉醬爆炒 2. 麵條煮熟 3. 拌入醬汁 4. 撒上芝士',
-                    '粉絲': '焗烤粉絲 - 1. 粉絲泡軟 2. 配醬汁 3. 撒上芝士 4. 烤箱焗烤'
+                    '粉絲': '焗烤粉絲 - 1. 粉絲泡軟 2. 配醬汁 3. 撒上芝士 4. 烤箱焗烤',
+                    '豌豆苗': '豌豆苗沙拉 - 1. 豌豆苗洗淨 2. 配沙拉醬 3. 拌勻完成 4. 裝盤',
+                    '茄子': '普羅旺斯燉菜 - 1. 茄子切塊 2. 配其他蔬菜 3. 燉煮入味 4. 撒上香草',
+                    '栗子': '栗子濃湯 - 1. 栗子煮熟 2. 打成泥 3. 加奶油煮滾 4. 調味完成',
+                    '銀耳': '銀耳甜湯 - 1. 銀耳泡發 2. 加水煮滾 3. 燉煮至爛 4. 加糖調味'
                 },
                 '日式': {
                     '雞': '照燒雞 - 1. 雞肉煎至金黃 2. 加入照燒醬 3. 收汁完成 4. 撒上芝麻',
@@ -190,11 +245,15 @@
                     '蝦': '天婦羅蝦 - 1. 蝦裹粉漿 2. 油炸至金黃 3. 配天婦羅醬 4. 撒上紫蘇',
                     '蛋': '親子丼 - 1. 雞肉炒熟 2. 加入蛋液 3. 淋在飯上 4. 撒上蔥花',
                     '菜': '醋物 - 1. 蔬菜洗淨 2. 醋醬調味 3. 拌勻完成 4. 裝盤',
-                    '菇': '茶碗蒸 - 1. 蛋液調味 2. 加入菇類 3. 蒸熟完成 4. 撒上薑絲',
+                    '菇': '茶碗蒸 - 1. 蛋液調味 2. 加入菇類 3. 淋上高湯 4. 撒上薑絲',
                     '豆腐': '湯豆腐 - 1. 豆腐切塊 2. 加高湯煮滾 3. 配醬料 4. 撒上蔥花',
                     '米': '壽司飯 - 1. 米飯調味 2. 配食材 3. 捲成壽司 4. 切片完成',
                     '麵': '拉麵 - 1. 麵條煮熟 2. 配高湯 3. 加配料 4. 撒上蔥花',
-                    '粉絲': '春雨沙律 - 1. 粉絲煮熟 2. 配蔬菜 3. 沙律醬拌勻 4. 裝盤'
+                    '粉絲': '春雨沙律 - 1. 粉絲煮熟 2. 配蔬菜 3. 沙律醬拌勻 4. 裝盤',
+                    '筍': '筍煮物 - 1. 筍切段 2. 加出汁煮滾 3. 調味完成 4. 撒上蔥花',
+                    '絲瓜': '絲瓜味噌湯 - 1. 絲瓜切塊 2. 加味噌湯 3. 煮熟完成 4. 撒上蔥花',
+                    '柿子': '柿子沙拉 - 1. 柿子切片 2. 配芝麻菜 3. 淋上醬汁 4. 完成',
+                    '桂圓': '桂圓紅棗茶 - 1. 桂圓泡發 2. 加紅棗 3. 煮滾 4. 加蜂蜜調味'
                 },
                 '韓式': {
                     '雞': '韓式炸雞 - 1. 雞肉裹粉 2. 油炸至金黃 3. 加韓式醬 4. 撒芝麻',
@@ -208,7 +267,11 @@
                     '豆腐': '韓式豆腐鍋 - 1. 豆腐切塊 2. 加醬料 3. 煮滾完成 4. 撒蔥花',
                     '米': '石鍋拌飯 - 1. 米飯煮熟 2. 配蔬菜 3. 拌醬料 4. 撒蔥花',
                     '麵': '冷麵 - 1. 麵條煮熟 2. 冷湯調味 3. 配配菜 4. 拌勻食用',
-                    '粉絲': '韓式粉絲 - 1. 粉絲煮熟 2. 配蔬菜 3. 拌醬料 4. 撒芝麻'
+                    '粉絲': '韓式粉絲 - 1. 粉絲煮熟 2. 配蔬菜 3. 拌醬料 4. 撒芝麻',
+                    '韭菜': '韭菜煎餅 - 1. 韭菜切段 2. 混合麵糊 3. 平底鍋煎熟 4. 切塊完成',
+                    '空心菜': '韓式炒空心菜 - 1. 空心菜洗淨 2. 爆炒 3. 加醬料 4. 完成',
+                    '蓮藕': '韓式涼拌蓮藕 - 1. 蓮藕切片 2. 爽脆處理 3. 涼拌調味 4. 完成',
+                    '黑木耳': '韓式涼拌黑木耳 - 1. 黑木耳泡發 2. 熱水焯熟 3. 涼拌調味 4. 完成'
                 },
                 '泰式': {
                     '雞': '泰式炒雞 - 1. 雞肉炒熟 2. 加泰式醬 3. 配蔬菜 4. 撒花生',
@@ -222,7 +285,11 @@
                     '豆腐': '泰式豆腐 - 1. 豆腐煎熟 2. 加泰式醬 3. 配蔬菜 4. 撒花生',
                     '米': '泰式炒飯 - 1. 米飯炒熟 2. 加泰式醬 3. 配蔬菜 4. 撒花生',
                     '麵': '泰式炒麵 - 1. 麵條炒熟 2. 加泰式醬 3. 配蔬菜 4. 撒花生',
-                    '粉絲': '泰式炒粉 - 1. 粉絲炒熟 2. 加泰式醬 3. 配蔬菜 4. 撒花生'
+                    '粉絲': '泰式炒粉 - 1. 粉絲炒熟 2. 加泰式醬 3. 配蔬菜 4. 撒花生',
+                    '苦瓜': '泰式苦瓜炒蛋 - 1. 苦瓜切片 2. 雞蛋炒熟 3. 加泰式醬 4. 撒花生',
+                    '豆角': '泰式炒豆角 - 1. 豆角炒熟 2. 加泰式醬 3. 配辣椒 4. 撒花生',
+                    '栗子': '栗子泰式咖喱 - 1. 栗子煮熟 2. 加泰式咖喱 3. 燉煮入味 4. 撒香草',
+                    '蘿蔔': '泰式蘿蔔湯 - 1. 蘿蔔切塊 2. 加泰式湯底 3. 煮熟完成 4. 撒香草'
                 },
                 '台式': {
                     '雞': '三杯雞 - 1. 雞肉炒熟 2. 加三杯醬 3. 收汁完成 4. 撒九層塔',
@@ -236,7 +303,11 @@
                     '豆腐': '麻婆豆腐 - 1. 豆腐切塊 2. 爆香肉末 3. 加入豆腐 4. 調味收汁',
                     '米': '滷肉飯 - 1. 米飯煮熟 2. 滷肉調味 3. 淋在飯上 4. 撒蔥花',
                     '麵': '陽春麵 - 1. 麵條煮熟 2. 配高湯 3. 撒蔥花 4. 淋香油',
-                    '粉絲': '雞絲粉 - 1. 粉絲煮熟 2. 配雞絲 3. 淋高湯 4. 撒蔥花'
+                    '粉絲': '雞絲粉 - 1. 粉絲煮熟 2. 配雞絲 3. 淋高湯 4. 撒蔥花',
+                    '小蔥': '蔥油雞 - 1. 雞肉煮熟 2. 淋蔥油 3. 配醬料 4. 完成',
+                    '空心菜': '蒜泥白肉空心菜 - 1. 空心菜汆燙 2. 白肉切片 3. 拌醬料 4. 完成',
+                    '白菜': '白菜滷 - 1. 白菜切段 2. 加滷料 3. 燉煮入味 4. 完成',
+                    '羊肉': '薑絲羊肉湯 - 1. 羊肉煮熟 2. 加薑絲 3. 調味完成 4. 撒蔥花'
                 }
             };
             
@@ -253,14 +324,50 @@
             const recipeKey = recipes[cuisine] && recipes[cuisine][selectedIngredient];
             
             if (recipeKey) {
-                recipeTitle.textContent = `${cuisine}${selectedIngredient}食譜`;
-                recipeSteps.innerHTML = `<ol><li>${recipeKey.split(' - ')[1].replace(/ \d\. /g, '</li><li>')}</li></ol>`;
+                recipeTitle.textContent = `${season}${cuisine}${selectedIngredient}食譜`;
+                recipeSteps.innerHTML = `<ol><li>${recipeKey.split(' - ')[1].replace(/ \\d\\. /g, '</li><li>')}</li></ol>`;
             } else {
                 recipeTitle.textContent = '自選食譜';
                 recipeSteps.innerHTML = '<p>請提供更多材料或選擇其他菜系以獲取食譜</p>';
             }
             
             recipeDisplay.style.display = 'block';
+        }
+
+        // 編輯材料功能
+        function editIngredients() {
+            const currentIngredients = Array.from(document.getElementById('ingredient').options).map(option => option.text);
+            const newIngredient = prompt('請輸入新的材料名稱:', '');
+            
+            if(newIngredient) {
+                const ingredientSelect = document.getElementById('ingredient');
+                const option = document.createElement('option');
+                option.value = newIngredient;
+                option.textContent = newIngredient;
+                
+                // 檢查是否已存在相同的材料
+                const existingOption = Array.from(ingredientSelect.options).find(opt => opt.value === newIngredient);
+                if(!existingOption) {
+                    ingredientSelect.appendChild(option);
+                    alert(`已添加材料：${newIngredient}`);
+                } else {
+                    alert('該材料已存在！');
+                }
+            }
+        }
+
+        // 編輯食譜功能
+        function editRecipes() {
+            const cuisine = document.getElementById('cuisine').value;
+            const ingredient = prompt('請輸入材料名稱以添加或修改食譜:', '');
+            
+            if(ingredient) {
+                const recipe = prompt(`${ingredient} 的食譜步驟 (格式: 步驟1 - 步驟2 - 步驟3):`, '');
+                
+                if(recipe) {
+                    alert(`已保存 ${cuisine} ${ingredient} 的食譜：\n${recipe}\n\n注意：此更改只在當前會話中有效，刷新頁面後會恢復預設食譜。`);
+                }
+            }
         }
     </script>
 </body>
