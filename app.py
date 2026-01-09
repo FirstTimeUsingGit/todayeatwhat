@@ -4,8 +4,39 @@ from bs4 import BeautifulSoup
 import json
 import time
 import random
+import os
 
 app = Flask(__name__)
+
+# 從JSON文件加載初始數據
+def load_data():
+    try:
+        with open('/workspace/data.json', 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        return data
+    except FileNotFoundError:
+        # 如果文件不存在，創建一個默認結構
+        default_data = {
+            "cookingMethods": ["蒸", "炒", "煮", "炸", "湯", "麵"],
+            "ingredientTypes": ["肉類", "蔬菜", "海鮮", "蛋", "豆類", "其他", "直接食用", "生食"],
+            "ingredients": [
+                {"id": 1, "name": "雞肉", "type": "肉類", "season": "四季", "cookingMethods": ["炒", "煮", "蒸", "炸"]},
+                {"id": 2, "name": "豬肉", "type": "肉類", "season": "四季", "cookingMethods": ["炒", "煮", "蒸", "炸"]},
+                {"id": 3, "name": "牛肉", "type": "肉類", "season": "四季", "cookingMethods": ["炒", "煮", "蒸", "炸"]},
+                {"id": 4, "name": "魚", "type": "海鮮", "season": "四季", "cookingMethods": ["蒸", "煮", "炸"]},
+                {"id": 5, "name": "蝦", "type": "海鮮", "season": "四季", "cookingMethods": ["蒸", "煮", "炸", "炒"]}
+            ],
+            "recipes": []
+        }
+        save_data(default_data)
+        return default_data
+
+def save_data(data):
+    with open('/workspace/data.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+# 加載初始數據
+data = load_data()
 
 # 模擬從icook抓取的食譜數據
 icook_recipes = [
@@ -123,7 +154,7 @@ def scrape_latest_from_icook():
         soup = BeautifulSoup(response.content, 'html.parser')
         
         # 找到食譜項目
-        recipe_items = soup.find_all('div', {'data-test-id': 'browse-recipe-item'})[:10]  # 只抓取前10個
+        recipe_items = soup.find_all('div', {'data-test-id': 'browse-recipe-item'})[:5]  # 只抓取前5個
         
         recipes = []
         for item in recipe_items:
@@ -220,6 +251,50 @@ def classify_category(title):
         return '重口味'
     else:
         return '主菜'
+
+# API端點：獲取所有材料
+@app.route('/api/ingredients')
+def get_ingredients():
+    """獲取所有材料"""
+    return jsonify(data.get('ingredients', []))
+
+# API端點：添加新材料
+@app.route('/api/ingredients', methods=['POST'])
+def add_ingredient():
+    """添加新材料"""
+    new_ingredient = request.json
+    new_ingredient['id'] = len(data['ingredients']) + 1
+    data['ingredients'].append(new_ingredient)
+    save_data(data)
+    return jsonify({'message': '材料添加成功', 'ingredient': new_ingredient}), 201
+
+# API端點：獲取所有食譜
+@app.route('/api/recipes_db')
+def get_all_recipes():
+    """獲取數據庫中的所有食譜"""
+    return jsonify(data.get('recipes', []))
+
+# API端點：添加新食譜
+@app.route('/api/recipes_db', methods=['POST'])
+def add_recipe():
+    """添加新食譜到數據庫"""
+    new_recipe = request.json
+    new_recipe['id'] = len(data['recipes']) + 1
+    data['recipes'].append(new_recipe)
+    save_data(data)
+    return jsonify({'message': '食譜添加成功', 'recipe': new_recipe}), 201
+
+# API端點：保存用戶數據
+@app.route('/api/save_data', methods=['POST'])
+def save_user_data():
+    """保存用戶的材料和食譜數據"""
+    user_data = request.json
+    if 'ingredients' in user_data:
+        data['ingredients'] = user_data['ingredients']
+    if 'recipes' in user_data:
+        data['recipes'] = user_data['recipes']
+    save_data(data)
+    return jsonify({'message': '數據保存成功'})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
