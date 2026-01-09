@@ -1,230 +1,1135 @@
-{  "cookingMethods": ["蒸", "炒","煮", "炸","湯", "麵"],
-  "ingredientTypes": ["肉類", "蔬菜", "海鮮", "蛋", "豆類", "其他", "直接食用", "生食"],
-  "ingredients": [
-    {"id":1,"name":"雞肉","type":"肉類","season":"四季","cookingMethods":["炒","煮","蒸","炸"]},
-
-    {"id":2,"name":"牛肉","type":"肉類","season":"四季","cookingMethods":["炒","煮","蒸","炸"]},
-    {"id":3,"name":"豬肉","type":"肉類","season":"四季","cookingMethods":["炒","煮","蒸","炸"]},
-    {"id":4,"name":"魚","type":"海鮮","season":"四季","cookingMethods":["蒸","煮","炸"]},
-    {"id":5,"name":"蝦","type":"海鮮","season":"四季","cookingMethods":["蒸","煮","炸","炒"]},
-    {"id":6,"name":"蟹","type":"海鮮","season":"四季","cookingMethods":["蒸","煮"]},
-    {"id":7,"name":"龍蝦","type":"海鮮","season":"四季","cookingMethods":["蒸","煮"]},
-    {"id":8,"name":"蛤","type":"海鮮","season":"四季","cookingMethods":["蒸","煮"]},
-    {"id":9,"name":"牡蠣","type":"海鮮","season":"四季","cookingMethods":["蒸","煮"]},
-    {"id":10,"name":"魷魚","type":"海鮮","season":"四季","cookingMethods":["蒸","煮","炸","炒"]},
-    {"id":11,"name":"章魚","type":"海鮮","season":"四季","cookingMethods":["蒸","煮","炸","炒"]},
-    {"id":12,"name":"豆腐","type":"豆類","season":"四季","cookingMethods":["炒","煮","蒸"]},
-    {"id":13,"name":"豆芽","type":"豆類","season":"四季","cookingMethods":["炒","煮"]},
-    {"id":14,"name":"黑豆","type":"豆類","season":"四季","cookingMethods":["煮"]},
-    {"id":15,"name":"綠豆","type":"豆類","season":"四季","cookingMethods":["煮"]},
-    {"id":16,"name":"紅豆","type":"豆類","season":"四季","cookingMethods":["煮"]},
-    {"id":17,"name":"花生","type":"豆類","season":"四季","cookingMethods":["炒","煮"]},
-    {"id":18,"name":"杏仁","type":"豆類","season":"四季","cookingMethods":["炒","煮"]},
-    {"id":19,"name":"核桃","type":"豆類","season":"四季","cookingMethods":["炒","煮"]},
-    {"id":20,"name":"開心果","type":"豆類","season":"四季","cookingMethods":["炒","煮"]},
-    {"id":21,"name":"雞蛋","type":"蛋","season":"四季","cookingMethods":["炒","煮","蒸","炸"]},
-    {"id":22,"name":"鴨蛋","type":"蛋","season":"四季","cookingMethods":["炒","煮","蒸","炸"]},
-    {"id":23,"name":"鵪鶉蛋","type":"蛋","season":"四季","cookingMethods":["炒","煮","蒸","炸"]},
-    {"id":24,"name":"鹹蛋","type":"蛋","season":"四季","cookingMethods":["炒","煮","蒸"]},
-    {"id":25,"name":"千層蛋","type":"蛋","season":"四季","cookingMethods":["炒","煮"]},
-    {"id":26,"name":"豆漿","type":"豆類","season":"四季","cookingMethods":["煮"]},
-    {"id":27,"name":"牛奶","type":"其他","season":"四季","cookingMethods":["煮"]},
-    {"id":28,"name":"酸奶","type":"其他","season":"四季","cookingMethods":["直接食用"]},
-    {"id":29,"name":"起司","type":"其他","season":"四季","cookingMethods":["直接食用","烤"]},
-    {"id":30,"name":"奶酪","type":"其他","season":"四季","cookingMethods":["直接食用","烤"]},
-    {"id":31,"name":"黃油","type":"其他","season":"四季","cookingMethods":["直接食用","烤"]},
-    {"id":32,"name":"馬鈴薯","type":"蔬菜","season":"四季","cookingMethods":["炒","煮","蒸","炸"]},
-    {"id":33,"name":"西紅柿","type":"蔬菜","season":"夏","cookingMethods":["炒","煮","生食"]},
-    {"id":34,"name":"青椒","type":"蔬菜","season":"夏","cookingMethods":["炒","煮","生食"]},
-    {"id":35,"name":"紅椒","type":"蔬菜","season":"夏","cookingMethods":["炒","煮","生食"]},
-    {"id":36,"name":"黃椒","type":"蔬菜","season":"夏","cookingMethods":["炒","煮","生食"]},
-    {"id":37,"name":"洋蔥","type":"蔬菜","season":"四季","cookingMethods":["炒","煮","生食"]},
-    {"id":38,"name":"大蒜","type":"蔬菜","season":"四季","cookingMethods":["炒","煮","生食"]},
-    {"id":39,"name":"生薑","type":"蔬菜","season":"四季","cookingMethods":["炒","煮","生食"]},
-    {"id":40,"name":"胡蘿蔔","type":"蔬菜","season":"四季","cookingMethods":["炒","煮","蒸"]},
-    {"id":41,"name":"芹菜","type":"蔬菜","season":"四季","cookingMethods":["炒","煮","生食"]},
-    {"id":42,"name":"菠菜","type":"蔬菜","season":"春","cookingMethods":["炒","煮","生食"]},
-    {"id":43,"name":"白菜","type":"蔬菜","season":"秋","cookingMethods":["炒","煮","蒸"]},
-    {"id":44,"name":"花椰菜","type":"蔬菜","season":"春","cookingMethods":["炒","蒸"]},
-    {"id":45,"name":"西蘭花","type":"蔬菜","season":"秋","cookingMethods":["炒","蒸"]},
-    {"id":46,"name":"南瓜","type":"蔬菜","season":"秋","cookingMethods":["煮","蒸"]},
-    {"id":47,"name":"冬瓜","type":"蔬菜","season":"夏","cookingMethods":["煮","蒸"]},
-    {"id":48,"name":"絲瓜","type":"蔬菜","season":"夏","cookingMethods":["炒","煮"]},
-    {"id":49,"name":"茄子","type":"蔬菜","season":"夏","cookingMethods":["炒","煮","蒸"]},
-    {"id":50,"name":"豆角","type":"蔬菜","season":"夏","cookingMethods":["炒","煮"]},
-    {"id":51,"name":"豌豆","type":"蔬菜","season":"春","cookingMethods":["炒","煮"]},
-    {"id":52,"name":"玉米","type":"蔬菜","season":"夏","cookingMethods":["煮","蒸"]},
-    {"id":53,"name":"蘆筍","type":"蔬菜","season":"春","cookingMethods":["炒","蒸"]},
-    {"id":54,"name":"竹筍","type":"蔬菜","season":"春","cookingMethods":["炒","煮"]},
-    {"id":55,"name":"蘑菇","type":"蔬菜","season":"四季","cookingMethods":["炒","煮","蒸"]},
-    {"id":56,"name":"香菇","type":"蔬菜","season":"四季","cookingMethods":["炒","煮","蒸"]},
-    {"id":57,"name":"杏鮑菇","type":"蔬菜","season":"四季","cookingMethods":["炒","煮","蒸"]},
-    {"id":58,"name":"金針菇","type":"蔬菜","season":"四季","cookingMethods":["炒","煮"]},
-    {"id":59,"name":"平菇","type":"蔬菜","season":"四季","cookingMethods":["炒","煮","蒸"]},
-    {"id":60,"name":"松露","type":"蔬菜","season":"秋","cookingMethods":["炒","煮"]},
-    {"id":61,"name":"韭菜","type":"蔬菜","season":"春","cookingMethods":["炒","煮"]},
-    {"id":62,"name":"香菜","type":"蔬菜","season":"四季","cookingMethods":["生食"]},
-    {"id":63,"name":"薄荷","type":"蔬菜","season":"四季","cookingMethods":["生食"]},
-    {"id":64,"name":"羅勒","type":"蔬菜","season":"夏","cookingMethods":["生食"]},
-    {"id":65,"name":"紫蘇","type":"蔬菜","season":"夏","cookingMethods":["生食"]},
-    {"id":66,"name":"芫茜","type":"蔬菜","season":"夏","cookingMethods":["生食"]},
-    {"id":67,"name":"茴香","type":"蔬菜","season":"秋","cookingMethods":["生食","炒"]},
-    {"id":68,"name":"芹菜葉","type":"蔬菜","season":"四季","cookingMethods":["生食","炒"]},
-    {"id":69,"name":"甘藍","type":"蔬菜","season":"秋","cookingMethods":["炒","煮"]},
-    {"id":70,"name":"瑞士甘藍","type":"蔬菜","season":"春","cookingMethods":["炒","煮"]},
-    {"id":71,"name":"芥藍","type":"蔬菜","season":"四季","cookingMethods":["炒","蒸"]},
-    {"id":72,"name":"小白菜","type":"蔬菜","season":"四季","cookingMethods":["炒","蒸"]},
-    {"id":73,"name":"上海青","type":"蔬菜","season":"四季","cookingMethods":["炒","蒸"]},
-    {"id":74,"name":"空心菜","type":"蔬菜","season":"夏","cookingMethods":["炒","蒸"]},
-    {"id":75,"name":"芋頭","type":"蔬菜","season":"秋","cookingMethods":["煮","蒸","炸"]},
-    {"id":76,"name":"山藥","type":"蔬菜","season":"秋","cookingMethods":["煮","蒸","炸"]},
-    {"id":77,"name":"紅薯","type":"蔬菜","season":"秋","cookingMethods":["煮","蒸","炸"]},
-    {"id":78,"name":"蘿蔔","type":"蔬菜","season":"冬","cookingMethods":["煮","蒸"]},
-    {"id":79,"name":"青蔥","type":"蔬菜","season":"四季","cookingMethods":["炒","生食"]},
-    {"id":80,"name":"蒜苗","type":"蔬菜","season":"春","cookingMethods":["炒","生食"]},
-    {"id":81,"name":"西生菜","type":"蔬菜","season":"四季","cookingMethods":["生食"]},
-    {"id":82,"name":"火箭菜","type":"蔬菜","season":"春","cookingMethods":["生食"]},
-    {"id":83,"name":"羽衣甘藍","type":"蔬菜","season":"冬","cookingMethods":["炒","煮"]},
-    {"id":84,"name":"四季豆","type":"蔬菜","season":"夏","cookingMethods":["炒","煮"]},
-    {"id":85,"name":"秋葵","type":"蔬菜","season":"夏","cookingMethods":["炒","煮"]},
-    {"id":86,"name":"苦瓜","type":"蔬菜","season":"夏","cookingMethods":["炒","煮"]},
-    {"id":87,"name":"黃瓜","type":"蔬菜","season":"夏","cookingMethods":["炒","生食"]},
-    {"id":88,"name":"節瓜","type":"蔬菜","season":"夏","cookingMethods":["炒","煮"]},
-    {"id":89,"name":"西葫蘆","type":"蔬菜","season":"夏","cookingMethods":["炒","煮"]},
-    {"id":90,"name":"椰菜","type":"蔬菜","season":"秋","cookingMethods":["炒","蒸"]},
-    {"id":91,"name":"青花菜","type":"蔬菜","season":"秋","cookingMethods":["炒","蒸"]},
-    {"id":92,"name":"高麗菜","type":"蔬菜","season":"冬","cookingMethods":["炒","煮"]},
-    {"id":93,"name":"紫甘藍","type":"蔬菜","season":"冬","cookingMethods":["炒","生食"]},
-    {"id":94,"name":"蘿蔔葉","type":"蔬菜","season":"冬","cookingMethods":["炒","煮"]},
-    {"id":95,"name":"薑黃","type":"蔬菜","season":"四季","cookingMethods":["炒","煮"]},
-    {"id":96,"name":"牛蒡","type":"蔬菜","season":"秋","cookingMethods":["炒","煮"]},
-    {"id":97,"name":"蓮藕","type":"蔬菜","season":"秋","cookingMethods":["炒","煮"]},
-    {"id":98,"name":"金蓮花","type":"蔬菜","season":"春","cookingMethods":["炒","煮"]},
-    {"id":99,"name":"西洋菜","type":"蔬菜","season":"冬","cookingMethods":["炒","煮"]},
-    {"id":100,"name":"唐生菜","type":"蔬菜","season":"四季","cookingMethods":["生食"]},
-    {
-            "id": 1748360136389,
-            "name": "粉絲",
-            "type": "其他",
-            "season": "四季",
-            "cookingMethods": [
-                "湯",
-                "煮"
-            ]
-        },
-        {
-            "id": 1748360161475,
-            "name": "四季豆",
-            "type": "蔬菜",
-            "season": "四季",
-            "cookingMethods": [
-                "炒"
-            ]
-        },
-        {
-            "id": 1748360182701,
-            "name": "娃娃菜",
-            "type": "蔬菜",
-            "season": "四季",
-            "cookingMethods": [
-                "湯",
-                "炒",
-                "煮"
-            ]
-        },
-        {
-            "id": 1748360244867,
-            "name": "雞翼",
-            "type": "肉類",
-            "season": "四季",
-            "cookingMethods": [
-                "炒",
-                "煮",
-                "炸",
-                "蒸"
-            ]
-        },
-        {
-            "id": 1748360258292,
-            "name": "豬扒",
-            "type": "肉類",
-            "season": "四季",
-            "cookingMethods": [
-                "蒸",
-                "炒",
-                "煮",
-                "炸"
-            ]
-        },
-        {
-            "id": 1748360271960,
-            "name": "豬腩肉",
-            "type": "肉類",
-            "season": "四季",
-            "cookingMethods": [
-                "炒",
-                "煮",
-                "蒸"
-            ]
-        },
-        {
-            "id": 1748360285682,
-            "name": "牛腩",
-            "type": "肉類",
-            "season": "四季",
-            "cookingMethods": [
-                "炒",
-                "煮"
-            ]
-        },
-        {
-            "id": 1748360299304,
-            "name": "牛柳",
-            "type": "肉類",
-            "season": "四季",
-            "cookingMethods": [
-                "炒"
-            ]
-        }
+{
+  "cookingMethods": [
+    "蒸",
+    "炒",
+    "煮",
+    "炸",
+    "湯",
+    "麵"
   ],
-  "recipes": [
-    {"id":1,"name":"蕃茄炒蛋","ingredients":[21,33],"method":"1. 將雞蛋打散\n2. 將西紅柿切塊\n3. 熱鍋加油，炒雞蛋至半熟\n4. 加入西紅柿，翻炒均勻，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":2,"name":"宮保雞丁","ingredients":[1,34,35,37,17],"method":"1. 雞肉切丁，醃製\n2. 青椒、紅椒切丁\n3. 花生炸至金黃\n4. 熱鍋加油，炒雞丁\n5. 加入青椒、紅椒、洋蔥、花生，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":3,"name":"魚香肉絲","ingredients":[3,37,38,33],"method":"1. 豬肉切絲，醃製\n2. 洋蔥、大蒜切絲\n3. 西紅柿切塊\n4. 熱鍋加油，炒豬肉絲\n5. 加入洋蔥、大蒜、西紅柿，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":4,"name":"清蒸魚","ingredients":[4,38,39],"method":"1. 魚洗淨，抹鹽\n2. 大蒜、生薑切片\n3. 魚放入蒸籠，撒上大蒜、生薑\n4. 蒸10-15分鐘，淋醬油出鍋","cookingMethods":["蒸"],"seasons":["春","夏","秋","冬"]},
-    {"id":5,"name":"番茄蛋湯","ingredients":[21,33],"method":"1. 雞蛋打散\n2. 西紅柿切塊\n3. 鍋中加水煮沸，加入西紅柿\n4. 慢慢倒入蛋液，調味後出鍋","cookingMethods":["煮"],"seasons":["春","夏","秋","冬"]},
-    {"id":6,"name":"麻婆豆腐","ingredients":[12,3,38,39],"method":"1. 豆腐切塊\n2. 豬肉切末\n3. 熱鍋加油，炒豬肉末\n4. 加入豆腐、大蒜、生薑，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":7,"name":"宮保蝦仁","ingredients":[5,34,35,37,17],"method":"1. 蝦仁洗淨\n2. 青椒、紅椒切丁\n3. 花生炸至金黃\n4. 熱鍋加油，炒蝦仁\n5. 加入青椒、紅椒、洋蔥、花生，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":8,"name":"清蒸蟹","ingredients":[6,38,39],"method":"1. 蟹洗淨\n2. 大蒜、生薑切片\n3. 蟹放入蒸籠，撒上大蒜、生薑\n4. 蒸15-20分鐘，蘸醬出鍋","cookingMethods":["蒸"],"seasons":["春","夏","秋","冬"]},
-    {"id":9,"name":"番茄牛肉","ingredients":[2,33,37],"method":"1. 牛肉切片，醃製\n2. 西紅柿切塊\n3. 熱鍋加油，炒牛肉\n4. 加入西紅柿、洋蔥，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":10,"name":"魚香茄子","ingredients":[49,37,38,33],"method":"1. 茄子切塊\n2. 洋蔥、大蒜切絲\n3. 西紅柿切塊\n4. 熱鍋加油，炒茄子\n5. 加入洋蔥、大蒜、西紅柿，調味後出鍋","cookingMethods":["炒"],"seasons":["夏","秋"]},
-    {"id":11,"name":"清蒸帶魚","ingredients":[4,38,39],"method":"1. 帶魚洗淨\n2. 大蒜、生薑切片\n3. 帶魚放入蒸籠，撒上大蒜、生薑\n4. 蒸10-15分鐘，淋醬油出鍋","cookingMethods":["蒸"],"seasons":["春","夏","秋","冬"]},
-    {"id":12,"name":"番茄雞蛋湯","ingredients":[1,21,33],"method":"1. 雞肉切絲\n2. 雞蛋打散\n3. 西紅柿切塊\n4. 鍋中加水煮沸，加入西紅柿、雞肉\n5. 倒入蛋液，調味後出鍋","cookingMethods":["煮"],"seasons":["春","夏","秋","冬"]},
-    {"id":13,"name":"蒜蓉菠菜","ingredients":[42,38],"method":"1. 菠菜洗淨\n2. 大蒜切末\n3. 熱鍋加油，炒大蒜末\n4. 加入菠菜，快速翻炒，調味後出鍋","cookingMethods":["炒"],"seasons":["春","秋","冬"]},
-    {"id":14,"name":"冬瓜排骨湯","ingredients":[47,3],"method":"1. 排骨洗淨焯水\n2. 冬瓜切塊\n3. 鍋中加水煮沸，加入排骨\n4. 加入冬瓜，慢燉1小時，調味後出鍋","cookingMethods":["煮"],"seasons":["夏","秋"]},
-    {"id":15,"name":"紅燒茄子","ingredients":[49,37,38],"method":"1. 茄子切塊\n2. 洋蔥、大蒜切絲\n3. 熱鍋加油，炒茄子\n4. 加入洋蔥、大蒜，調味後出鍋","cookingMethods":["炒"],"seasons":["夏","秋"]},
-    {"id":16,"name":"清炒豆芽","ingredients":[13,37],"method":"1. 豆芽洗淨\n2. 洋蔥切絲\n3. 熱鍋加油，炒洋蔥\n4. 加入豆芽，快速翻炒，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":17,"name":"南瓜粥","ingredients":[46,27],"method":"1. 南瓜切塊\n2. 鍋中加水煮沸，加入南瓜\n3. 加入牛奶，慢煮至濃稠，調味後出鍋","cookingMethods":["煮"],"seasons":["秋","冬"]},
-    {"id":18,"name":"香菇雞湯","ingredients":[1,56],"method":"1. 雞肉切塊焯水\n2. 香菇泡發切片\n3. 鍋中加水煮沸，加入雞肉\n4. 加入香菇，慢燉1小時，調味後出鍋","cookingMethods":["煮"],"seasons":["春","夏","秋","冬"]},
-    {"id":19,"name":"椒鹽魷魚","ingredients":[10,34,35],"method":"1. 魷魚洗淨切段\n2. 青椒、紅椒切丁\n3. 魷魚裹粉炸至金黃\n4. 熱鍋加油，炒青椒、紅椒\n5. 加入魷魚，撒椒鹽出鍋","cookingMethods":["炸","炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":20,"name":"薑蔥炒蟹","ingredients":[6,39,79],"method":"1. 蟹洗淨切塊\n2. 生薑、青蔥切段\n3. 熱鍋加油，炒生薑、青蔥\n4. 加入蟹，翻炒至熟，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":21,"name":"馬鈴薯燉牛肉","ingredients":[2,32,40],"method":"1. 牛肉切塊焯水\n2. 馬鈴薯、胡蘿蔔切塊\n3. 鍋中加水煮沸，加入牛肉\n4. 加入馬鈴薯、胡蘿蔔，慢燉1小時，調味後出鍋","cookingMethods":["煮"],"seasons":["春","夏","秋","冬"]},
-    {"id":22,"name":"蒜蓉西蘭花","ingredients":[45,38],"method":"1. 西蘭花洗淨切小朵\n2. 大蒜切末\n3. 熱鍋加油，炒大蒜末\n4. 加入西蘭花，快速翻炒，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":23,"name":"紅燒豆腐","ingredients":[12,3,37],"method":"1. 豆腐切塊\n2. 豬肉切末\n3. 熱鍋加油，炒豬肉末\n4. 加入豆腐、洋蔥，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":24,"name":"涼拌黃瓜","ingredients":[87,38],"method":"1. 黃瓜洗淨切片\n2. 大蒜切末\n3. 混合大蒜、醬油、醋，拌勻黃瓜，冷藏後食用","cookingMethods":["生食"],"seasons":["春","夏","秋","冬"]},
-    {"id":25,"name":"炒青菜","ingredients":[41,38],"method":"1. 青菜洗淨切段\n2. 大蒜切末\n3. 熱鍋加油，炒大蒜末\n4. 加入青菜，快速翻炒，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":26,"name":"番茄牛腩湯","ingredients":[2,33,27],"method":"1. 牛腩切塊焯水\n2. 西紅柿切塊\n3. 鍋中加水煮沸，加入牛腩\n4. 加入西紅柿，慢燉1小時，調味後出鍋","cookingMethods":["煮"],"seasons":["春","夏","秋","冬"]},
-    {"id":27,"name":"炒蛋豆腐","ingredients":[12,21,38],"method":"1. 雞蛋打散\n2. 豆腐切塊\n3. 大蒜切末\n4. 熱鍋加油，炒大蒜末\n5. 加入豆腐，翻炒至微黃\n6. 倒入蛋液，快速翻炒至熟，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":28,"name":"涼拌豆腐","ingredients":[12,38],"method":"1. 豆腐切塊\n2. 大蒜切末\n3. 混合大蒜、醬油、醋，拌勻豆腐，冷藏後食用","cookingMethods":["生食"],"seasons":["春","夏","秋","冬"]},
-    {"id":29,"name":"炒米粉","ingredients":[1748360136389,38,37],"method":"1. 粉絲泡軟切段\n2. 大蒜切末\n3. 熱鍋加油，炒大蒜末\n4. 加入粉絲，快速翻炒，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":30,"name":"娃娃菜湯","ingredients":[1748360182701,38],"method":"1. 娃娃菜洗淨切段\n2. 大蒜切末\n3. 鍋中加水煮沸，加入娃娃菜\n4. 加入大蒜，慢煮10分鐘，調味後出鍋","cookingMethods":["煮"],"seasons":["春","夏","秋","冬"]},
-    {"id":31,"name":"炒雞翼","ingredients":[1748360244867,38],"method":"1. 雞翼洗淨切段\n2. 大蒜切末\n3. 熱鍋加油，炒大蒜末\n4. 加入雞翼，快速翻炒至熟，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":32,"name":"豬扒炒青椒","ingredients":[1748360258292,34,38],"method":"1. 豬扒切片\n2. 青椒切丁\n3. 大蒜切末\n4. 熱鍋加油，炒大蒜末\n5. 加入豬扒、青椒，快速翻炒至熟，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":33,"name":"豬腩肉燉土豆","ingredients":[1748360271960,32,40],"method":"1. 豬腩肉切塊焯水\n2. 馬鈴薯切塊\n3. 鍋中加水煮沸，加入豬腩肉\n4. 加入馬鈴薯，慢燉1小時，調味後出鍋","cookingMethods":["煮"],"seasons":["春","夏","秋","冬"]},
-    {"id":34,"name":"牛柳炒四季豆","ingredients":[1748360299304,1748360161475,38],"method":"1. 牛柳切絲\n2. 四季豆洗淨切段\n3. 大蒜切末\n4. 熱鍋加油，炒大蒜末\n5. 加入牛柳、四季豆，快速翻炒至熟，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":35,"name":"雞肉炒娃娃菜","ingredients":[1748360244867,1748360182701,38],"method":"1. 雞肉切絲\n2. 娃娃菜洗淨切段\n3. 大蒜切末\n4. 熱鍋加油，炒大蒜末\n5. 加入雞肉、娃娃菜，快速翻炒至熟，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":36,"name":"豬扒炒四季豆","ingredients":[1748360258292,1748360161475,38],"method":"1. 豬扒切片\n2. 四季豆洗淨切段\n3. 大蒜切末\n4. 熱鍋加油，炒大蒜末\n5. 加入豬扒、四季豆，快速翻炒至熟，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":37,"name":"豬腩肉炒娃娃菜","ingredients":[1748360271960,1748360182701,38],"method":"1. 豬腩肉切塊焯水\n2. 娃娃菜洗淨切段\n3. 大蒜切末\n4. 熱鍋加油，炒大蒜末\n5. 加入豬腩肉、娃娃菜，快速翻炒至熟，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":38,"name":"牛腩炒四季豆","ingredients":[1748360271960,1748360161475,38],"method":"1. 牛腩切塊焯水\n2. 四季豆洗淨切段\n3. 大蒜切末\n4. 熱鍋加油，炒大蒜末\n5. 加入牛腩、四季豆，快速翻炒至熟，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]},
-    {"id":39,"name":"牛柳炒娃娃菜","ingredients":[1748360299304,1748360182701,38],"method":"1. 牛柳切絲\n2. 娃娃菜洗淨切段\n3. 大蒜切末\n4. 熱鍋加油，炒大蒜末\n5. 加入牛柳、娃娃菜，快速翻炒至熟，調味後出鍋","cookingMethods":["炒"],"seasons":["春","夏","秋","冬"]}
-  ]}
+  "ingredientTypes": [
+    "肉類",
+    "蔬菜",
+    "海鮮",
+    "蛋",
+    "豆類",
+    "其他",
+    "直接食用",
+    "生食"
+  ],
+  "ingredients": [
+    {
+      "id": 1,
+      "name": "雞肉",
+      "type": "肉類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸",
+        "炸"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "牛肉",
+      "type": "肉類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸",
+        "炸"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "豬肉",
+      "type": "肉類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸",
+        "炸"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "魚",
+      "type": "海鮮",
+      "season": "四季",
+      "cookingMethods": [
+        "蒸",
+        "煮",
+        "炸"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "蝦",
+      "type": "海鮮",
+      "season": "四季",
+      "cookingMethods": [
+        "蒸",
+        "煮",
+        "炸",
+        "炒"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "蟹",
+      "type": "海鮮",
+      "season": "四季",
+      "cookingMethods": [
+        "蒸",
+        "煮"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "龍蝦",
+      "type": "海鮮",
+      "season": "四季",
+      "cookingMethods": [
+        "蒸",
+        "煮"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "蛤",
+      "type": "海鮮",
+      "season": "四季",
+      "cookingMethods": [
+        "蒸",
+        "煮"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "牡蠣",
+      "type": "海鮮",
+      "season": "四季",
+      "cookingMethods": [
+        "蒸",
+        "煮"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "魷魚",
+      "type": "海鮮",
+      "season": "四季",
+      "cookingMethods": [
+        "蒸",
+        "煮",
+        "炸",
+        "炒"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "章魚",
+      "type": "海鮮",
+      "season": "四季",
+      "cookingMethods": [
+        "蒸",
+        "煮",
+        "炸",
+        "炒"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "豆腐",
+      "type": "豆類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "豆芽",
+      "type": "豆類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "黑豆",
+      "type": "豆類",
+      "season": "四季",
+      "cookingMethods": [
+        "煮"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "綠豆",
+      "type": "豆類",
+      "season": "四季",
+      "cookingMethods": [
+        "煮"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "紅豆",
+      "type": "豆類",
+      "season": "四季",
+      "cookingMethods": [
+        "煮"
+      ]
+    },
+    {
+      "id": 17,
+      "name": "花生",
+      "type": "豆類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "杏仁",
+      "type": "豆類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "核桃",
+      "type": "豆類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "開心果",
+      "type": "豆類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "雞蛋",
+      "type": "蛋",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸",
+        "炸"
+      ]
+    },
+    {
+      "id": 22,
+      "name": "鴨蛋",
+      "type": "蛋",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸",
+        "炸"
+      ]
+    },
+    {
+      "id": 23,
+      "name": "鵪鶉蛋",
+      "type": "蛋",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸",
+        "炸"
+      ]
+    },
+    {
+      "id": 24,
+      "name": "鹹蛋",
+      "type": "蛋",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 25,
+      "name": "千層蛋",
+      "type": "蛋",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 26,
+      "name": "豆漿",
+      "type": "豆類",
+      "season": "四季",
+      "cookingMethods": [
+        "煮"
+      ]
+    },
+    {
+      "id": 27,
+      "name": "牛奶",
+      "type": "其他",
+      "season": "四季",
+      "cookingMethods": [
+        "煮"
+      ]
+    },
+    {
+      "id": 28,
+      "name": "酸奶",
+      "type": "其他",
+      "season": "四季",
+      "cookingMethods": [
+        "直接食用"
+      ]
+    },
+    {
+      "id": 29,
+      "name": "起司",
+      "type": "其他",
+      "season": "四季",
+      "cookingMethods": [
+        "直接食用",
+        "烤"
+      ]
+    },
+    {
+      "id": 30,
+      "name": "奶酪",
+      "type": "其他",
+      "season": "四季",
+      "cookingMethods": [
+        "直接食用",
+        "烤"
+      ]
+    },
+    {
+      "id": 31,
+      "name": "黃油",
+      "type": "其他",
+      "season": "四季",
+      "cookingMethods": [
+        "直接食用",
+        "烤"
+      ]
+    },
+    {
+      "id": 32,
+      "name": "馬鈴薯",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸",
+        "炸"
+      ]
+    },
+    {
+      "id": 33,
+      "name": "西紅柿",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "生食"
+      ]
+    },
+    {
+      "id": 34,
+      "name": "青椒",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "生食"
+      ]
+    },
+    {
+      "id": 35,
+      "name": "紅椒",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "生食"
+      ]
+    },
+    {
+      "id": 36,
+      "name": "黃椒",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "生食"
+      ]
+    },
+    {
+      "id": 37,
+      "name": "洋蔥",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "生食"
+      ]
+    },
+    {
+      "id": 38,
+      "name": "大蒜",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "生食"
+      ]
+    },
+    {
+      "id": 39,
+      "name": "生薑",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "生食"
+      ]
+    },
+    {
+      "id": 40,
+      "name": "胡蘿蔔",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 41,
+      "name": "芹菜",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "生食"
+      ]
+    },
+    {
+      "id": 42,
+      "name": "菠菜",
+      "type": "蔬菜",
+      "season": "春",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "生食"
+      ]
+    },
+    {
+      "id": 43,
+      "name": "白菜",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 44,
+      "name": "花椰菜",
+      "type": "蔬菜",
+      "season": "春",
+      "cookingMethods": [
+        "炒",
+        "蒸"
+      ]
+    },
+    {
+      "id": 45,
+      "name": "西蘭花",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "炒",
+        "蒸"
+      ]
+    },
+    {
+      "id": 46,
+      "name": "南瓜",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 47,
+      "name": "冬瓜",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 48,
+      "name": "絲瓜",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 49,
+      "name": "茄子",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 50,
+      "name": "豆角",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 51,
+      "name": "豌豆",
+      "type": "蔬菜",
+      "season": "春",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 52,
+      "name": "玉米",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 53,
+      "name": "蘆筍",
+      "type": "蔬菜",
+      "season": "春",
+      "cookingMethods": [
+        "炒",
+        "蒸"
+      ]
+    },
+    {
+      "id": 54,
+      "name": "竹筍",
+      "type": "蔬菜",
+      "season": "春",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 55,
+      "name": "蘑菇",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 56,
+      "name": "香菇",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 57,
+      "name": "杏鮑菇",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 58,
+      "name": "金針菇",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 59,
+      "name": "平菇",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 60,
+      "name": "松露",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 61,
+      "name": "韭菜",
+      "type": "蔬菜",
+      "season": "春",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 62,
+      "name": "香菜",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "生食"
+      ]
+    },
+    {
+      "id": 63,
+      "name": "薄荷",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "生食"
+      ]
+    },
+    {
+      "id": 64,
+      "name": "羅勒",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "生食"
+      ]
+    },
+    {
+      "id": 65,
+      "name": "紫蘇",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "生食"
+      ]
+    },
+    {
+      "id": 66,
+      "name": "芫茜",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "生食"
+      ]
+    },
+    {
+      "id": 67,
+      "name": "茴香",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "生食",
+        "炒"
+      ]
+    },
+    {
+      "id": 68,
+      "name": "芹菜葉",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "生食",
+        "炒"
+      ]
+    },
+    {
+      "id": 69,
+      "name": "甘藍",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 70,
+      "name": "瑞士甘藍",
+      "type": "蔬菜",
+      "season": "春",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 71,
+      "name": "芥藍",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "蒸"
+      ]
+    },
+    {
+      "id": 72,
+      "name": "小白菜",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "蒸"
+      ]
+    },
+    {
+      "id": 73,
+      "name": "上海青",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "蒸"
+      ]
+    },
+    {
+      "id": 74,
+      "name": "空心菜",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "蒸"
+      ]
+    },
+    {
+      "id": 75,
+      "name": "芋頭",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "煮",
+        "蒸",
+        "炸"
+      ]
+    },
+    {
+      "id": 76,
+      "name": "山藥",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "煮",
+        "蒸",
+        "炸"
+      ]
+    },
+    {
+      "id": 77,
+      "name": "紅薯",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "煮",
+        "蒸",
+        "炸"
+      ]
+    },
+    {
+      "id": 78,
+      "name": "蘿蔔",
+      "type": "蔬菜",
+      "season": "冬",
+      "cookingMethods": [
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 79,
+      "name": "青蔥",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "生食"
+      ]
+    },
+    {
+      "id": 80,
+      "name": "蒜苗",
+      "type": "蔬菜",
+      "season": "春",
+      "cookingMethods": [
+        "炒",
+        "生食"
+      ]
+    },
+    {
+      "id": 81,
+      "name": "西生菜",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "生食"
+      ]
+    },
+    {
+      "id": 82,
+      "name": "火箭菜",
+      "type": "蔬菜",
+      "season": "春",
+      "cookingMethods": [
+        "生食"
+      ]
+    },
+    {
+      "id": 83,
+      "name": "羽衣甘藍",
+      "type": "蔬菜",
+      "season": "冬",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 84,
+      "name": "四季豆",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 85,
+      "name": "秋葵",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 86,
+      "name": "苦瓜",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 87,
+      "name": "黃瓜",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "生食"
+      ]
+    },
+    {
+      "id": 88,
+      "name": "節瓜",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 89,
+      "name": "西葫蘆",
+      "type": "蔬菜",
+      "season": "夏",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 90,
+      "name": "椰菜",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "炒",
+        "蒸"
+      ]
+    },
+    {
+      "id": 91,
+      "name": "青花菜",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "炒",
+        "蒸"
+      ]
+    },
+    {
+      "id": 92,
+      "name": "高麗菜",
+      "type": "蔬菜",
+      "season": "冬",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 93,
+      "name": "紫甘藍",
+      "type": "蔬菜",
+      "season": "冬",
+      "cookingMethods": [
+        "炒",
+        "生食"
+      ]
+    },
+    {
+      "id": 94,
+      "name": "蘿蔔葉",
+      "type": "蔬菜",
+      "season": "冬",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 95,
+      "name": "薑黃",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 96,
+      "name": "牛蒡",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 97,
+      "name": "蓮藕",
+      "type": "蔬菜",
+      "season": "秋",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 98,
+      "name": "金蓮花",
+      "type": "蔬菜",
+      "season": "春",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 99,
+      "name": "西洋菜",
+      "type": "蔬菜",
+      "season": "冬",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 100,
+      "name": "唐生菜",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "生食"
+      ]
+    },
+    {
+      "id": 1748360136389,
+      "name": "粉絲",
+      "type": "其他",
+      "season": "四季",
+      "cookingMethods": [
+        "湯",
+        "煮"
+      ]
+    },
+    {
+      "id": 1748360161475,
+      "name": "四季豆",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "炒"
+      ]
+    },
+    {
+      "id": 1748360182701,
+      "name": "娃娃菜",
+      "type": "蔬菜",
+      "season": "四季",
+      "cookingMethods": [
+        "湯",
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 1748360244867,
+      "name": "雞翼",
+      "type": "肉類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "炸",
+        "蒸"
+      ]
+    },
+    {
+      "id": 1748360258292,
+      "name": "豬扒",
+      "type": "肉類",
+      "season": "四季",
+      "cookingMethods": [
+        "蒸",
+        "炒",
+        "煮",
+        "炸"
+      ]
+    },
+    {
+      "id": 1748360271960,
+      "name": "豬腩肉",
+      "type": "肉類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮",
+        "蒸"
+      ]
+    },
+    {
+      "id": 1748360285682,
+      "name": "牛腩",
+      "type": "肉類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒",
+        "煮"
+      ]
+    },
+    {
+      "id": 1748360299304,
+      "name": "牛柳",
+      "type": "肉類",
+      "season": "四季",
+      "cookingMethods": [
+        "炒"
+      ]
+    }
+  ],
+  "recipes": []
+}
